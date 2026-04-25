@@ -1,0 +1,1 @@
+{"root":["./src/app.tsx","./src/main.tsx","./src/types.ts","./src/hooks/useparty.ts","./src/host/hostapp.tsx","./src/lib/roomcode.ts","./src/screens/joinscreen.tsx","./src/screens/playerapp.tsx","./party/index.ts","./scripts/test-openai.ts"],"version":"5.9.3"}
