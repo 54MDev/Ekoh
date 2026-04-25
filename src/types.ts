@@ -1,4 +1,4 @@
-export type Phase = "lobby" | "seed" | "question" | "vote" | "results";
+export type Phase = "lobby" | "seed" | "question" | "vote" | "results" | "end";
 
 export type Role = "host" | "target" | "spectator";
 
@@ -41,7 +41,9 @@ export type ClientMessage =
   | { type: "submitSeedAnswer"; answer: string; index: number }
   | { type: "submitAnswer"; answer: string }
   | { type: "submitVote"; vote: "A" | "B" }
-  | { type: "advancePhase" };
+  | { type: "advancePhase" }
+  | { type: "abortRound" }
+  | { type: "newGame" };
 
 export type ServerMessage =
   | { type: "stateUpdate"; state: RoomState }

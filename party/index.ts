@@ -12,6 +12,7 @@ const QUESTION_BANK = [
   "What's your most irrational fear?",
   "First thing you do when you walk into a hotel room?",
   "What's a small thing that instantly improves your mood?",
+  "What are your political views"
 ];
 //question bank for AI data collection
 const SEED_QUESTION_BANK = [
@@ -20,9 +21,15 @@ const SEED_QUESTION_BANK = [
   "What's a phrase or word you say way more than you should?",
   "What did you do last weekend?",
   "What's a strong opinion you hold about food?",
+  "Describe a typical morning for you.",
+  "What's a TV show or movie you've rewatched too many times?",
+  "How do you usually procrastinate?",
+  "What's something you complain about way too much?",
+  "How would your friends describe you in three words?",
+
 ];
 
-const SEED_QUESTION_COUNT = 5;
+const MAX_ROUNDS = 5;
 
 function shuffled<T>(arr: T[]): T[] {
   const out = arr.slice();
@@ -71,6 +78,10 @@ export default class EchoServer implements Party.Server {
     roundNumber: 0,
     questions: shuffled(QUESTION_BANK),
   };
+
+  // Q&A pairs from prior rounds, keyed by player id. Lets the clone get
+  // smarter when the same player is targeted again.
+  private playerHistory: Record<string, { q: string; a: string }[]> = {};
 
   constructor(readonly room: Party.Room) {}
 
@@ -148,6 +159,32 @@ export default class EchoServer implements Party.Server {
         if (this.advancePhase()) this.broadcastState();
         return;
       }
+      case "abortRound": {
+        if (!this.isHost(sender)) return;
+        if (this.state.phase === "lobby" || this.state.phase === "end") return;
+        for (const p of Object.values(this.state.players)) {
+          if (p.role === "target") p.role = "spectator";
+        }
+        this.state.round = null;
+        this.state.phase = "lobby";
+        this.broadcastState();
+        return;
+      }
+      case "newGame": {
+        if (!this.isHost(sender)) return;
+        if (this.state.phase !== "end") return;
+        for (const p of Object.values(this.state.players)) {
+          p.score = 0;
+          if (p.role === "target") p.role = "spectator";
+        }
+        this.playerHistory = {};
+        this.state.roundNumber = 0;
+        this.state.round = null;
+        this.state.questions = shuffled(QUESTION_BANK);
+        this.state.phase = "lobby";
+        this.broadcastState();
+        return;
+      }
       case "submitAnswer": {
         if (this.state.phase !== "question" || !this.state.round) return;
         if (sender.id !== this.state.round.targetId) return;
@@ -196,6 +233,12 @@ export default class EchoServer implements Party.Server {
       round.scoreDeltas[round.targetId] =
         (round.scoreDeltas[round.targetId] ?? 0) + targetFooledCount * 2;
     }
+
+    if (round.targetAnswer) {
+      const history = this.playerHistory[round.targetId] ?? [];
+      history.push({ q: round.currentQuestion, a: round.targetAnswer });
+      this.playerHistory[round.targetId] = history;
+    }
   }
 
   private advancePhase(): boolean {
@@ -203,30 +246,15 @@ export default class EchoServer implements Party.Server {
       case "lobby": {
         const target = Object.values(this.state.players).find((p) => p.role === "target");
         if (!target) return false;
-        this.state.roundNumber += 1;
-        this.state.round = {
-          targetId: target.id,
-          seedQuestions: shuffled(SEED_QUESTION_BANK).slice(0, SEED_QUESTION_COUNT),
-          seedAnswers: [],
-          previousAnswers: [],
-          questionIndex: 0,
-          currentQuestion: "",
-          targetAnswer: null,
-          cloneAnswer: null,
-          cloneStreaming: false,
-          cloneError: null,
-          answerAIsTarget: false,
-          votes: {},
-          scoreDeltas: {},
-        };
-        this.state.phase = "seed";
+        this.startRoundFor(target.id);
         return true;
       }
       case "seed": {
         if (!this.state.round) return false;
-        const idx = this.state.round.questionIndex;
-        this.state.round.currentQuestion =
-          this.state.questions[idx] ?? "Placeholder question?";
+        const seenQs = new Set(this.state.round.previousAnswers.map((p) => p.q));
+        const fresh = this.state.questions.find((q) => !seenQs.has(q));
+        const fallback = this.state.questions[this.state.round.questionIndex] ?? this.state.questions[0];
+        this.state.round.currentQuestion = fresh ?? fallback ?? "Placeholder question?";
         this.state.round.answerAIsTarget = Math.random() > 0.5;
         this.state.round.cloneAnswer = "";
         this.state.round.cloneStreaming = true;
@@ -246,14 +274,63 @@ export default class EchoServer implements Party.Server {
         return true;
       }
       case "results": {
+        const previousTargetId = this.state.round?.targetId ?? null;
         for (const p of Object.values(this.state.players)) {
           if (p.role === "target") p.role = "spectator";
         }
         this.state.round = null;
-        this.state.phase = "lobby";
+
+        if (this.state.roundNumber >= MAX_ROUNDS) {
+          this.state.phase = "end";
+          return true;
+        }
+
+        const next = this.pickNextTarget(previousTargetId);
+        if (!next) {
+          // No eligible players (e.g. everyone disconnected) — fall back to lobby
+          this.state.phase = "lobby";
+          return true;
+        }
+        next.role = "target";
+        this.startRoundFor(next.id);
         return true;
       }
+      case "end": {
+        return false;
+      }
     }
+  }
+
+  private startRoundFor(targetId: string) {
+    this.state.roundNumber += 1;
+    const history = this.playerHistory[targetId] ?? [];
+    this.state.round = {
+      targetId,
+      seedQuestions: shuffled(SEED_QUESTION_BANK).slice(0, SEED_QUESTION_COUNT),
+      seedAnswers: [],
+      previousAnswers: history.slice(),
+      questionIndex: 0,
+      currentQuestion: "",
+      targetAnswer: null,
+      cloneAnswer: null,
+      cloneStreaming: false,
+      cloneError: null,
+      answerAIsTarget: false,
+      votes: {},
+      scoreDeltas: {},
+    };
+    this.state.phase = "seed";
+  }
+
+  private pickNextTarget(previousTargetId: string | null): RoomState["players"][string] | null {
+    const eligible = Object.values(this.state.players).filter(
+      (p) => p.role !== "host" && p.isConnected && p.name,
+    );
+    if (eligible.length === 0) return null;
+    if (!previousTargetId) return eligible[0];
+    const lastIdx = eligible.findIndex((p) => p.id === previousTargetId);
+    const nextIdx = lastIdx >= 0 ? (lastIdx + 1) % eligible.length : 0;
+    return eligible[nextIdx];
   }
 
   private startCloneStream() {

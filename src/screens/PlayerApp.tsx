@@ -7,6 +7,7 @@ import SeedScreen from "./SeedScreen";
 import QuestionScreen from "./QuestionScreen";
 import VoteScreen from "./VoteScreen";
 import ResultsScreen from "./ResultsScreen";
+import EndScreen from "./EndScreen";
 
 export default function PlayerApp() {
   const { code = "" } = useParams();
@@ -51,8 +52,10 @@ export default function PlayerApp() {
         <QuestionScreen state={state} me={me} send={send} />
       ) : state.phase === "vote" ? (
         <VoteScreen state={state} me={me} send={send} />
-      ) : (
+      ) : state.phase === "results" ? (
         <ResultsScreen state={state} me={me} />
+      ) : (
+        <EndScreen state={state} me={me} />
       )}
     </div>
   );

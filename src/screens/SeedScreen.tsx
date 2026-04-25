@@ -18,7 +18,6 @@ export default function SeedScreen({ state, me, send }: Props) {
   }
 
   const answered = round.seedAnswers.filter(Boolean).length;
-  const total = round.seedQuestions.length;
   return (
     <div className="phase phase--seed">
       <div className="phase-eyebrow">Seed phase</div>
@@ -26,9 +25,7 @@ export default function SeedScreen({ state, me, send }: Props) {
       <p className="phase-subtitle">
         {target?.name ?? "The target"} is teaching the AI how they talk.
       </p>
-      <p className="phase-progress">
-        {answered} / {total} questions answered
-      </p>
+      <p className="phase-progress">{answered === 0 ? "Answering…" : "Locked in ✓"}</p>
     </div>
   );
 }
@@ -71,8 +68,9 @@ function SeedForm({
       <div className="phase-eyebrow">You're the target</div>
       <h1 className="phase-title">Train your clone</h1>
       <p className="phase-subtitle">
-        Answer however you naturally would. Caps, slang, typos — all of it. The
-        AI is reading these to imitate you.
+        One question per round. The AI keeps everything you said in earlier
+        rounds — caps, slang, typos and all — so it gets sharper each time
+        you're picked.
       </p>
 
       <ol className="seed-list">
@@ -106,9 +104,9 @@ function SeedForm({
         })}
       </ol>
 
-      <p className="phase-progress">
-        {answeredCount} / {round.seedQuestions.length} locked in
-      </p>
+      {answeredCount > 0 && (
+        <p className="phase-progress">Locked in ✓ — host will reveal the question.</p>
+      )}
     </div>
   );
 }

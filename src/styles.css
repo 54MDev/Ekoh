@@ -418,6 +418,19 @@ button {
   min-width: 280px;
 }
 
+.btn--abort {
+  margin-top: 4px;
+  font-size: 14px;
+  color: var(--muted);
+  padding: 6px 14px;
+  border: 1px solid transparent;
+}
+
+.btn--abort:hover {
+  border-color: var(--warn);
+  color: var(--warn);
+}
+
 .player-row {
   display: flex;
   justify-content: space-between;

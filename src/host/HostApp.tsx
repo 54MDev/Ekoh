@@ -11,17 +11,28 @@ const PHASE_LABELS: Record<Phase, string> = {
   question: "Question",
   vote: "Vote",
   results: "Results",
-};
-
-const ADVANCE_LABELS: Record<Phase, string> = {
-  lobby: "Start round",
-  seed: "Reveal question",
-  question: "Open voting",
-  vote: "Close voting",
-  results: "Back to lobby",
+  end: "Game over",
 };
 
 const TYPEWRITER_CPS = 28;
+const MAX_ROUNDS = 5;
+
+function advanceLabel(phase: Phase, roundNumber: number): string {
+  switch (phase) {
+    case "lobby":
+      return "Start round";
+    case "seed":
+      return "Reveal question";
+    case "question":
+      return "Open voting";
+    case "vote":
+      return "Close voting";
+    case "results":
+      return roundNumber >= MAX_ROUNDS ? "Final standings" : "Next round";
+    case "end":
+      return "";
+  }
+}
 
 export default function HostApp() {
   const { code = "" } = useParams();
@@ -91,6 +102,7 @@ export default function HostApp() {
             <HostLobby
               players={nonHost}
               target={target}
+              roundNumber={state.roundNumber}
               onAssign={(id) => send({ type: "assignTarget", playerId: id })}
             />
           )}
@@ -98,16 +110,34 @@ export default function HostApp() {
           {phase === "question" && <HostQuestion state={state} />}
           {phase === "vote" && <HostVote state={state} players={nonHost} />}
           {phase === "results" && <HostResults state={state} players={nonHost} />}
+          {phase === "end" && <HostEnd players={nonHost} />}
 
           <div className="host-advance">
-            <button
-              className="btn btn--primary btn--big"
-              disabled={!canAdvance}
-              onClick={() => send({ type: "advancePhase" })}
-            >
-              {ADVANCE_LABELS[phase]}
-            </button>
+            {phase === "end" ? (
+              <button
+                className="btn btn--primary btn--big"
+                onClick={() => send({ type: "newGame" })}
+              >
+                New game
+              </button>
+            ) : (
+              <button
+                className="btn btn--primary btn--big"
+                disabled={!canAdvance}
+                onClick={() => send({ type: "advancePhase" })}
+              >
+                {advanceLabel(phase, state.roundNumber)}
+              </button>
+            )}
             {advanceHint && <p className="muted">{advanceHint}</p>}
+            {phase !== "lobby" && phase !== "end" && (
+              <button
+                className="btn btn--ghost btn--abort"
+                onClick={() => send({ type: "abortRound" })}
+              >
+                Abort round
+              </button>
+            )}
           </div>
         </>
       )}
@@ -115,23 +145,54 @@ export default function HostApp() {
   );
 }
 
+function HostEnd({ players }: { players: Player[] }) {
+  const sorted = [...players].sort((a, b) => b.score - a.score);
+  const winner = sorted[0];
+  return (
+    <section className="host-section">
+      <h2>Final standings</h2>
+      {winner && (
+        <p className="host-big">🏆 {winner.name} wins with {winner.score}</p>
+      )}
+      <ul className="leaderboard leaderboard--big">
+        {sorted.map((p, i) => (
+          <li key={p.id}>
+            <span className="leaderboard-rank">{i + 1}</span>
+            <span className="leaderboard-name">{p.name}</span>
+            <span className="leaderboard-score">{p.score}</span>
+          </li>
+        ))}
+      </ul>
+    </section>
+  );
+}
+
 function HostLobby({
   players,
   target,
+  roundNumber,
   onAssign,
 }: {
   players: Player[];
   target: Player | null;
+  roundNumber: number;
   onAssign: (id: string) => void;
 }) {
+  const sortedByScore = [...players].sort((a, b) => b.score - a.score);
+  const showLeaderboard = roundNumber > 0;
   return (
     <section className="host-section">
-      <h2>Players ({players.length})</h2>
+      <h2>{showLeaderboard ? `Leaderboard after round ${roundNumber}` : `Players (${players.length})`}</h2>
+      {!showLeaderboard && players.length > 0 && (
+        <p className="muted">
+          Pick one player to be the target. They'll answer all 5 rounds and the clone learns from their answers.
+        </p>
+      )}
       {players.length === 0 ? (
         <p className="muted">Waiting for players to join…</p>
       ) : (
         <ul className="player-list">
-          {players.map((p) => {
+          {sortedByScore.map((p, i) => {
             const isTarget = target?.id === p.id;
             return (
               <li
@@ -140,7 +201,15 @@ function HostLobby({
                   isTarget ? "player--target" : ""
                 }`}
               >
-                <span className="player-name">{p.name}</span>
+                <span className="player-name">
+                  {showLeaderboard && (
+                    <span className="leaderboard-rank">{i + 1}.</span>
+                  )}{" "}
+                  {p.name}
+                  {showLeaderboard && (
+                    <span className="leaderboard-score"> {p.score}</span>
+                  )}
+                </span>
                 <button
                   className={`btn ${isTarget ? "btn--primary" : "btn--ghost"}`}
                   onClick={() => onAssign(p.id)}
@@ -161,15 +230,12 @@ function HostSeed({ state }: { state: RoomState }) {
   const round = state.round;
   if (!round) return null;
   const target = Object.values(state.players).find((p) => p.id === round.targetId);
-  const answered = round.seedAnswers.filter(Boolean).length;
-  const total = round.seedQuestions.length;
+  const locked = round.seedAnswers.filter(Boolean).length > 0;
   return (
     <section className="host-section">
       <h2>Seed phase</h2>
-      <p className="host-big">{target?.name ?? "Target"} is being seeded…</p>
-      <p className="muted">
-        {answered} / {total} questions answered
-      </p>
+      <p className="host-big">{target?.name ?? "Target"} is teaching the AI…</p>
+      <p className="muted">{locked ? "Answer locked in ✓" : "Waiting on their answer…"}</p>
     </section>
   );
 }
