@@ -3,6 +3,7 @@ import type { ClientMessage, RoomState, ServerMessage } from "../src/types";
 
 const ROOM_CODE_RE = /^ECHO-\d{4}$/;
 
+//question bank for when people guess
 const QUESTION_BANK = [
   "What's your go-to comfort food at 1am?",
   "Describe your perfect Sunday in one sentence.",
@@ -13,7 +14,7 @@ const QUESTION_BANK = [
   "First thing you do when you walk into a hotel room?",
   "What's a small thing that instantly improves your mood?",
 ];
-
+//question bank for AI data collection
 const SEED_QUESTION_BANK = [
   "Where did you grow up, and what was it like?",
   "What's a hobby or interest you're way too into?",
