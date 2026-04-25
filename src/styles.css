@@ -646,3 +646,36 @@ button {
   text-align: center;
   margin-top: 8px;
 }
+
+.vote-tally-cell--correct {
+  outline: 2px solid var(--ok);
+}
+
+.score-delta {
+  color: var(--ok);
+  font-size: 0.75em;
+  font-weight: 600;
+}
+
+.results-reveal {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.results-reveal-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 18px;
+  padding: 10px 14px;
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 8px;
+}
+
+.results-label {
+  font-size: 24px;
+  font-weight: 800;
+  color: var(--accent);
+  min-width: 28px;
+}

@@ -3,7 +3,6 @@ import type { ClientMessage, RoomState, ServerMessage } from "../src/types";
 
 const ROOM_CODE_RE = /^ECHO-\d{4}$/;
 
-//question bank for when people guess
 const QUESTION_BANK = [
   "What's your go-to comfort food at 1am?",
   "Describe your perfect Sunday in one sentence.",
@@ -33,7 +32,7 @@ function shuffled<T>(arr: T[]): T[] {
   }
   return out;
 }
-
+// this one was a bit hard to get... So we used calude on this to help
 function buildClonePrompt(
   seedQuestions: string[],
   seedAnswers: string[],
@@ -63,6 +62,7 @@ When asked a question, answer as them. Keep it short and casual — one to three
 Do not explain yourself, do not break character, do not mention being an AI. Just answer the question.`;
 }
 
+//This was basically all us since it was just implimenting the partykit server
 export default class EchoServer implements Party.Server {
   state: RoomState = {
     phase: "lobby",
@@ -176,6 +176,28 @@ export default class EchoServer implements Party.Server {
     }
   }
 
+  private calculateScores() {
+    const round = this.state.round;
+    if (!round) return;
+    const correctVote = round.answerAIsTarget ? "A" : "B";
+    let targetFooledCount = 0;
+
+    for (const [playerId, vote] of Object.entries(round.votes)) {
+      if (vote === correctVote) {
+        this.state.players[playerId].score += 1;
+        round.scoreDeltas[playerId] = (round.scoreDeltas[playerId] ?? 0) + 1;
+      } else {
+        targetFooledCount += 1;
+      }
+    }
+
+    if (targetFooledCount > 0) {
+      this.state.players[round.targetId].score += targetFooledCount * 2;
+      round.scoreDeltas[round.targetId] =
+        (round.scoreDeltas[round.targetId] ?? 0) + targetFooledCount * 2;
+    }
+  }
+
   private advancePhase(): boolean {
     switch (this.state.phase) {
       case "lobby": {
@@ -195,6 +217,7 @@ export default class EchoServer implements Party.Server {
           cloneError: null,
           answerAIsTarget: false,
           votes: {},
+          scoreDeltas: {},
         };
         this.state.phase = "seed";
         return true;
@@ -218,6 +241,7 @@ export default class EchoServer implements Party.Server {
         return true;
       }
       case "vote": {
+        this.calculateScores();
         this.state.phase = "results";
         return true;
       }
