@@ -205,6 +205,59 @@ npx partykit deploy
 
 ---
 
+## Phase 6.5: Online Deployment
+
+### Overview
+
+PartyKit has first-class deployment built in. The server deploys to PartyKit's cloud infrastructure (Cloudflare Workers under the hood); the frontend deploys as a static site to any free host.
+
+### Steps
+
+**1. Deploy the PartyKit server**
+```bash
+npx partykit deploy
+# Outputs: https://echo.<username>.partykit.dev
+```
+
+**2. Store the OpenAI key as a secret (never hardcoded)**
+```bash
+npx partykit secret put OPENAI_API_KEY
+# Prompts for the value — stored encrypted, injected at runtime
+```
+
+**3. Point the frontend at the deployed server**
+
+In `vite.config.ts` or a `.env.production` file:
+```
+VITE_PARTYKIT_HOST=echo.<username>.partykit.dev
+```
+
+Anywhere `localhost:1999` or the dev host is hardcoded in the React app, replace it with:
+```ts
+const host = import.meta.env.VITE_PARTYKIT_HOST ?? "localhost:1999";
+```
+
+**4. Deploy the frontend**
+
+Recommended: Netlify (drag-and-drop or CLI)
+```bash
+npm run build        # outputs to dist/
+# Drag dist/ onto netlify.com/drop, or:
+npx netlify-cli deploy --prod --dir dist
+```
+
+Alternatively: Vercel (`npx vercel --prod`) or Cloudflare Pages — all free.
+
+**5. Smoke test off-network**
+
+Open the frontend URL on a phone with WiFi off (LTE only). Join a room, run a full round. This confirms there are no localhost references remaining.
+
+### What Players Need
+
+Just the frontend URL in any phone browser. No app install. Room codes work exactly as in local dev.
+
+---
+
 ## Division of Work (suggested)
 
 | Person A (backend-leaning) | Person B (frontend-leaning) |

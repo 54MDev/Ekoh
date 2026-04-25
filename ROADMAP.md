@@ -86,6 +86,20 @@
 
 ---
 
+## Phase 6.5: Online Deployment
+**Goal: Game is live on the internet — anyone can play from their phone without being on the same network**
+
+- [x] Run `npx partykit deploy` to push the server to PartyKit cloud (gets a `*.partykit.dev` URL)
+- [x] Store `OPENAI_API_KEY` as a PartyKit secret: `npx partykit secret put OPENAI_API_KEY`
+- [x] Update frontend env var: point `VITE_PARTYKIT_HOST` at the deployed PartyKit URL (not localhost)
+- [x] Build and deploy the React frontend to Netlify / Vercel / Cloudflare Pages (free tier)
+- [x] Share the frontend URL — players open it on any phone browser, no install needed
+- [ ] Smoke test the full flow: join from a phone on a different network → seed → question → vote → results
+
+**Milestone: A player outside your home network joins a room from their phone and plays a full round.**
+
+---
+
 ## Phase 7: Demo Prep (Sun 11 AM – 1 PM)
 - [ ] Run a full live round in the room — find and fix any rough edges
 - [ ] Prep 60-second pitch (use the framing from the summary doc)

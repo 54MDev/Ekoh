@@ -44,7 +44,10 @@ export default function QuestionScreen({ state, me, send }: Props) {
           </div>
         )
       ) : (
-        <p className="phase-subtitle">Spectator — sit tight while the target answers.</p>
+        <p className="phase-subtitle muted">
+          Spectator — sit tight while the target and their clone both answer.
+          You'll vote when the host opens voting.
+        </p>
       )}
     </div>
   );

@@ -35,6 +35,9 @@ export default function PlayerApp() {
 
   return (
     <div className="screen screen--player">
+      {!connected && (
+        <div className="disconnect-banner">Reconnecting…</div>
+      )}
       <header className="player-header">
         <div className="room-code-small">{code}</div>
         <div className={`pill pill--${connected ? "ok" : "warn"}`}>
@@ -43,7 +46,7 @@ export default function PlayerApp() {
       </header>
 
       {!state ? (
-        <p className="muted">Syncing room state…</p>
+        <p className="muted syncing">Syncing room state<span className="dot-1">.</span><span className="dot-2">.</span><span className="dot-3">.</span></p>
       ) : state.phase === "lobby" ? (
         <LobbyScreen state={state} me={me} code={code} />
       ) : state.phase === "seed" ? (

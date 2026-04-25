@@ -31,7 +31,12 @@ export default function JoinScreen() {
   return (
     <div className="screen screen--join">
       <h1 className="title">Echo</h1>
-      <p className="subtitle">Can the room tell you from your clone?</p>
+      <p className="subtitle">Can your friends tell you from your AI clone?</p>
+      <p className="join-blurb">
+        Each round, the target answers a question. An AI clone — trained to sound
+        exactly like them — takes the same shot. Everyone else votes: which answer
+        was real?
+      </p>
 
       <label className="field">
         <span>Your name</span>

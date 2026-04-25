@@ -80,6 +80,9 @@ export default function HostApp() {
 
   return (
     <div className="screen screen--host">
+      {!connected && (
+        <div className="disconnect-banner">Reconnecting…</div>
+      )}
       <header className="host-header">
         <div>
           <h1 className="host-room-code">{code}</h1>
@@ -95,7 +98,7 @@ export default function HostApp() {
       </header>
 
       {!state ? (
-        <p className="muted">Syncing…</p>
+        <p className="muted syncing">Syncing<span className="dot-1">.</span><span className="dot-2">.</span><span className="dot-3">.</span></p>
       ) : (
         <>
           {phase === "lobby" && (
@@ -230,12 +233,18 @@ function HostSeed({ state }: { state: RoomState }) {
   const round = state.round;
   if (!round) return null;
   const target = Object.values(state.players).find((p) => p.id === round.targetId);
-  const locked = round.seedAnswers.filter(Boolean).length > 0;
+  const answered = round.seedAnswers.filter(Boolean).length;
+  const total = round.seedQuestions.length;
+  const allDone = answered >= total;
   return (
     <section className="host-section">
-      <h2>Seed phase</h2>
-      <p className="host-big">{target?.name ?? "Target"} is teaching the AI…</p>
-      <p className="muted">{locked ? "Answer locked in ✓" : "Waiting on their answer…"}</p>
+      <h2>Seed phase — Round {state.roundNumber}</h2>
+      <p className="host-big">{target?.name ?? "Target"} is teaching the clone…</p>
+      <p className={`host-seed-progress ${allDone ? "host-seed-progress--done" : ""}`}>
+        {allDone
+          ? `All ${total} answer${total !== 1 ? "s" : ""} locked in ✓`
+          : `${answered} / ${total} answered…`}
+      </p>
     </section>
   );
 }

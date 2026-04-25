@@ -32,6 +32,7 @@ export interface RoomState {
   round: RoundState | null;
   roundNumber: number;
   questions: string[];
+  usedSeedQuestions: string[];
 }
 
 export type ClientMessage =

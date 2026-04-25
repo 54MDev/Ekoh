@@ -26,12 +26,15 @@ body {
   color: var(--fg);
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
 }
 
 input,
-button {
+button,
+textarea {
   font: inherit;
   color: inherit;
+  touch-action: manipulation;
 }
 
 .screen {
@@ -691,4 +694,85 @@ button {
   font-weight: 800;
   color: var(--accent);
   min-width: 28px;
+}
+
+/* Onboarding blurb on join screen */
+.join-blurb {
+  color: var(--muted);
+  font-size: 15px;
+  line-height: 1.6;
+  margin: 0;
+}
+
+/* Disconnection banner */
+.disconnect-banner {
+  background: var(--warn);
+  color: #000;
+  font-weight: 600;
+  font-size: 15px;
+  text-align: center;
+  padding: 10px 16px;
+  border-radius: 10px;
+  margin-bottom: 4px;
+  animation: pulse-banner 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse-banner {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+
+/* Seed progress on host screen */
+.host-seed-progress {
+  font-size: 28px;
+  color: var(--muted);
+  margin: 0;
+}
+
+.host-seed-progress--done {
+  color: var(--ok);
+}
+
+/* Animated syncing dots reuse the pending-dot keyframes */
+.syncing .dot-1,
+.syncing .dot-2,
+.syncing .dot-3 {
+  display: inline-block;
+  animation: pending-dot 1.4s infinite;
+}
+
+.syncing .dot-2 { animation-delay: 0.2s; }
+.syncing .dot-3 { animation-delay: 0.4s; }
+
+/* Mobile polish */
+@media (max-width: 480px) {
+  .btn--primary,
+  .btn--ghost {
+    padding: 16px 18px;
+    font-size: 17px;
+    border-radius: 12px;
+  }
+
+  .btn--vote {
+    padding: 40px 0;
+  }
+
+  .answer-form textarea,
+  .seed-item textarea {
+    min-height: 80px;
+    font-size: 17px;
+  }
+
+  .phase-question {
+    font-size: 22px;
+  }
+
+  .screen {
+    padding: 16px 14px;
+    gap: 16px;
+  }
+
+  .vote-buttons {
+    gap: 14px;
+  }
 }

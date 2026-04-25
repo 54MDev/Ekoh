@@ -2,7 +2,7 @@ import type * as Party from "partykit/server";
 import type { ClientMessage, RoomState, ServerMessage } from "../src/types";
 
 const ROOM_CODE_RE = /^ECHO-\d{4}$/;
- //bank for people who guess
+// bank for people who guess
 const QUESTION_BANK = [
   "What's your go-to comfort food at 1am?",
   "Describe your perfect Sunday in one sentence.",
@@ -12,9 +12,21 @@ const QUESTION_BANK = [
   "What's your most irrational fear?",
   "First thing you do when you walk into a hotel room?",
   "What's a small thing that instantly improves your mood?",
-  "What are your political views"
+  "What are your political views?",
+  "What's the last thing you Googled that you'd be embarrassed to share?",
+  "What's a skill you wish you had but never bothered learning?",
+  "What's a trip you took that changed how you see the world?",
+  "What's the most unpopular opinion you hold?",
+  "What's something you've lied about on your resume or bio?",
+  "What's a habit you keep trying to quit but can't?",
+  "If someone handed you $500 right now, what would you do with it?",
+  "What's something you judged someone for before understanding it?",
+  "What's the weirdest thing you've eaten and actually enjoyed?",
+  "What's a compliment you've received that you still think about?",
+  "What's a rule you live by that most people would find weird?",
 ];
-//question bank for AI data collection
+
+// question bank for AI data collection
 const SEED_QUESTION_BANK = [
   "Where did you grow up, and what was it like?",
   "What's a hobby or interest you're way too into?",
@@ -26,10 +38,30 @@ const SEED_QUESTION_BANK = [
   "How do you usually procrastinate?",
   "What's something you complain about way too much?",
   "How would your friends describe you in three words?",
-
+  "What's a weird or niche thing you know a lot about?",
+  "What's the most recent thing that made you laugh out loud?",
+  "What's a decision you made that surprised even yourself?",
+  "What's your relationship with your phone like on a typical day?",
+  "What's something you do differently from how most people do it?",
+  "What's a topic you could talk about for an hour without stopping?",
+  "Describe the last time you were genuinely nervous.",
+  "What's something you're weirdly competitive about?",
+  "What does your ideal Friday night look like?",
+  "What's a value you hold that you think is underrated?",
+  "What's the last thing you spent money on that you immediately regretted?",
+  "What kind of people do you find it hard to get along with?",
+  "What's a childhood memory that still makes you smile?",
+  "How do you usually react when things don't go your way?",
+  "What's something about yourself you've only recently accepted?",
+  "What's a place you keep meaning to visit but never have?",
+  "What do you do when you need to decompress after a hard day?",
+  "What's a piece of advice you got that you actually followed?",
+  "What's a tradition or ritual you've made up for yourself?",
+  "What's something you do that you think most people your age don't?",
 ];
 
 const MAX_ROUNDS = 5;
+const SEED_QUESTION_COUNT = 2;
 
 function shuffled<T>(arr: T[]): T[] {
   const out = arr.slice();
@@ -77,6 +109,7 @@ export default class EchoServer implements Party.Server {
     round: null,
     roundNumber: 0,
     questions: shuffled(QUESTION_BANK),
+    usedSeedQuestions: [],
   };
 
   // Q&A pairs from prior rounds, keyed by player id. Lets the clone get
@@ -181,6 +214,7 @@ export default class EchoServer implements Party.Server {
         this.state.roundNumber = 0;
         this.state.round = null;
         this.state.questions = shuffled(QUESTION_BANK);
+        this.state.usedSeedQuestions = [];
         this.state.phase = "lobby";
         this.broadcastState();
         return;
@@ -275,24 +309,26 @@ export default class EchoServer implements Party.Server {
       }
       case "results": {
         const previousTargetId = this.state.round?.targetId ?? null;
-        for (const p of Object.values(this.state.players)) {
-          if (p.role === "target") p.role = "spectator";
-        }
         this.state.round = null;
 
         if (this.state.roundNumber >= MAX_ROUNDS) {
+          for (const p of Object.values(this.state.players)) {
+            if (p.role === "target") p.role = "spectator";
+          }
           this.state.phase = "end";
           return true;
         }
 
-        const next = this.pickNextTarget(previousTargetId);
-        if (!next) {
-          // No eligible players (e.g. everyone disconnected) — fall back to lobby
+        const target = previousTargetId
+          ? this.state.players[previousTargetId]
+          : Object.values(this.state.players).find((p) => p.role !== "host" && p.isConnected && p.name) ?? null;
+
+        if (!target || !target.isConnected) {
           this.state.phase = "lobby";
           return true;
         }
-        next.role = "target";
-        this.startRoundFor(next.id);
+        target.role = "target";
+        this.startRoundFor(target.id);
         return true;
       }
       case "end": {
@@ -304,9 +340,13 @@ export default class EchoServer implements Party.Server {
   private startRoundFor(targetId: string) {
     this.state.roundNumber += 1;
     const history = this.playerHistory[targetId] ?? [];
+    const usedSet = new Set(this.state.usedSeedQuestions);
+    const freshSeed = shuffled(SEED_QUESTION_BANK.filter((q) => !usedSet.has(q)));
+    const pickedSeed = freshSeed.slice(0, SEED_QUESTION_COUNT);
+    this.state.usedSeedQuestions = [...this.state.usedSeedQuestions, ...pickedSeed];
     this.state.round = {
       targetId,
-      seedQuestions: shuffled(SEED_QUESTION_BANK).slice(0, SEED_QUESTION_COUNT),
+      seedQuestions: pickedSeed,
       seedAnswers: [],
       previousAnswers: history.slice(),
       questionIndex: 0,
@@ -322,16 +362,6 @@ export default class EchoServer implements Party.Server {
     this.state.phase = "seed";
   }
 
-  private pickNextTarget(previousTargetId: string | null): RoomState["players"][string] | null {
-    const eligible = Object.values(this.state.players).filter(
-      (p) => p.role !== "host" && p.isConnected && p.name,
-    );
-    if (eligible.length === 0) return null;
-    if (!previousTargetId) return eligible[0];
-    const lastIdx = eligible.findIndex((p) => p.id === previousTargetId);
-    const nextIdx = lastIdx >= 0 ? (lastIdx + 1) % eligible.length : 0;
-    return eligible[nextIdx];
-  }
 
   private startCloneStream() {
     const round = this.state.round;

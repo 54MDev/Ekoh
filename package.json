@@ -9,6 +9,9 @@
     "build": "tsc -b && vite build",
     "preview": "vite preview",
     "deploy:party": "partykit deploy",
+    "deploy:secret": "partykit env add OPENAI_API_KEY",
+    "deploy:frontend": "npm run build && npx wrangler pages deploy dist --project-name echo --commit-dirty=true",
+    "deploy": "npm run deploy:party && npm run deploy:frontend",
     "test:openai": "tsx scripts/test-openai.ts"
   },
   "dependencies": {
