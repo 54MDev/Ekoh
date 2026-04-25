@@ -2,7 +2,7 @@ import type * as Party from "partykit/server";
 import type { ClientMessage, RoomState, ServerMessage } from "../src/types";
 
 const ROOM_CODE_RE = /^ECHO-\d{4}$/;
-
+ //bank for people who guess
 const QUESTION_BANK = [
   "What's your go-to comfort food at 1am?",
   "Describe your perfect Sunday in one sentence.",
