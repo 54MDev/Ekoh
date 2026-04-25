@@ -12,6 +12,7 @@ export interface Player {
 
 export interface RoundState {
   targetId: string;
+  seedQuestions: string[];
   seedAnswers: string[];
   previousAnswers: { q: string; a: string }[];
   questionIndex: number;
@@ -19,6 +20,7 @@ export interface RoundState {
   targetAnswer: string | null;
   cloneAnswer: string | null;
   cloneStreaming: boolean;
+  cloneError: string | null;
   answerAIsTarget: boolean;
   votes: Record<string, "A" | "B">;
 }

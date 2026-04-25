@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import PartySocket from "partysocket";
 import type { ClientMessage, ServerMessage } from "../types";
 
@@ -52,9 +52,9 @@ export function useParty({ room, enabled = true, onMessage }: UsePartyOptions): 
     };
   }, [room, enabled]);
 
-  const send = (msg: ClientMessage) => {
+  const send = useCallback((msg: ClientMessage) => {
     socketRef.current?.send(JSON.stringify(msg));
-  };
+  }, []);
 
   return { send, connected, socket: socketRef.current };
 }
