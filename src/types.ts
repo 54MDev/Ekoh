@@ -23,6 +23,7 @@ export interface RoundState {
   cloneError: string | null;
   answerAIsTarget: boolean;
   votes: Record<string, "A" | "B">;
+  scoreDeltas: Record<string, number>;
 }
 
 export interface RoomState {

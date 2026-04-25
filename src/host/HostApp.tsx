@@ -325,21 +325,43 @@ function HostVote({ state, players }: { state: RoomState; players: Player[] }) {
 }
 
 function HostResults({ state, players }: { state: RoomState; players: Player[] }) {
+  const round = state.round;
   const sorted = [...players].sort((a, b) => b.score - a.score);
+  const aCount = round ? Object.values(round.votes).filter((v) => v === "A").length : 0;
+  const bCount = round ? Object.values(round.votes).filter((v) => v === "B").length : 0;
+  const correctVote = round ? (round.answerAIsTarget ? "A" : "B") : null;
+
   return (
     <section className="host-section">
       <h2>Round {state.roundNumber} results</h2>
-      <p className="host-question">{state.round?.currentQuestion}</p>
+      <p className="host-question">{round?.currentQuestion}</p>
       <FinalAnswers state={state} />
-      <p className="muted">Scoring lands in phase 4.</p>
+      {round && (
+        <div className="vote-tally">
+          <div className={`vote-tally-cell ${correctVote === "A" ? "vote-tally-cell--correct" : ""}`}>
+            <div className="vote-tally-label">A {correctVote === "A" ? "✓ Real" : "✗ Clone"}</div>
+            <div className="vote-tally-count">{aCount}</div>
+          </div>
+          <div className={`vote-tally-cell ${correctVote === "B" ? "vote-tally-cell--correct" : ""}`}>
+            <div className="vote-tally-label">B {correctVote === "B" ? "✓ Real" : "✗ Clone"}</div>
+            <div className="vote-tally-count">{bCount}</div>
+          </div>
+        </div>
+      )}
       <ul className="leaderboard leaderboard--big">
-        {sorted.map((p, i) => (
-          <li key={p.id}>
-            <span className="leaderboard-rank">{i + 1}</span>
-            <span className="leaderboard-name">{p.name}</span>
-            <span className="leaderboard-score">{p.score}</span>
-          </li>
-        ))}
+        {sorted.map((p, i) => {
+          const delta = round?.scoreDeltas[p.id] ?? 0;
+          return (
+            <li key={p.id}>
+              <span className="leaderboard-rank">{i + 1}</span>
+              <span className="leaderboard-name">{p.name}</span>
+              <span className="leaderboard-score">
+                {p.score}
+                {delta > 0 ? <span className="score-delta"> +{delta}</span> : null}
+              </span>
+            </li>
+          );
+        })}
       </ul>
     </section>
   );
