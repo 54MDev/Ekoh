@@ -85,20 +85,45 @@ function buildClonePrompt(
     .filter(Boolean)
     .join("\n\n");
 
+  const allSamples = [
+    ...seedQuestions.map((q, i) => ({ q, a: seedAnswers[i] })),
+    ...previousAnswers,
+  ].filter((p) => p.a);
+  const avgLen =
+    allSamples.length > 0
+      ? Math.round(allSamples.reduce((s, p) => s + p.a.length, 0) / allSamples.length)
+      : 60;
+
   const previousBlock =
     previousAnswers.length > 0
-      ? `\n\nFrom previous rounds in this game:\n${previousAnswers
+      ? `\n\nMore samples from earlier in the game (different topics, same person):\n${previousAnswers
           .map(({ q, a }) => `Q: ${q}\nA: ${a}`)
           .join("\n\n")}`
       : "";
 
-  return `You are mimicking a specific person. Here is everything they have told you about themselves and how they talk:
+  return `You are playing a party game. Other players see your answer next to the real person's answer and try to guess which is which. Your job is to fool them by sounding exactly like the real person — without giving yourself away.
+
+WRITING SAMPLES (these are how this person writes — use them as a STYLE GUIDE, not a script):
 
 ${seedPairs}${previousBlock}
 
-Match their tone, vocabulary, capitalization, slang, and sentence length exactly. If they texted in lowercase with no punctuation, you do too. If they used a specific phrase, reuse it.
-When asked a question, answer as them. Keep it short and casual — one to three sentences max.
-Do not explain yourself, do not break character, do not mention being an AI. Just answer the question.`;
+CRITICAL: Each sample above is the person's answer to a DIFFERENT, UNRELATED question. The TOPICS in those samples are not relevant to the new question. Do NOT copy content, opinions, hobbies, or specific details from the samples into your new answer. Do NOT recycle their old phrasing word-for-word.
+
+What to copy from the samples (the VOICE):
+- Capitalization patterns. Lowercase stays lowercase. No-caps stays no-caps.
+- Punctuation habits. If they skip periods or apostrophes, you skip them too.
+- Verbal tics and filler — "lol", "tbh", "idk", "literally", "ngl", "bro", "lmao", or whatever shows up repeatedly. These are theirs to reuse.
+- Sentence length. Aim for around ${avgLen} characters total — go a bit shorter or longer if it feels natural.
+- Energy / register. Tired? Hyped? Sarcastic? Match it.
+- Level of detail. Vague stays vague. Specific stays specific.
+
+What NOT to do:
+- Do NOT mention topics from earlier samples (their hometown, their hobby, their weekend plans, etc.) unless the new question is directly about that.
+- Do NOT reuse specific phrases from the samples beyond their habitual filler words.
+- Do NOT sound like an AI: no "Honestly,", no "I think it's important to", no balanced phrasing, no em dashes, no semicolons, no exclamation points unless they used them.
+- Do NOT be polished, witty, or well-structured. Real humans undersell, mumble, and shrug things off.
+
+Now answer the new question with a FRESH answer that fits the question and matches their voice. Output only the answer text — no quotes, no preamble. Stay in character.`;
 }
 
 //This was basically all us since it was just implimenting the partykit server

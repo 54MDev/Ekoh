@@ -3,6 +3,7 @@ import { useParams } from "react-router-dom";
 import { useParty } from "../hooks/useParty";
 import StreamingText from "./StreamingText";
 import { useTypewriter } from "./useTypewriter";
+import MusicPlayer from "./MusicPlayer";
 import type { Phase, Player, RoomState, ServerMessage } from "../types";
 
 const PHASE_LABELS: Record<Phase, string> = {
@@ -96,6 +97,8 @@ export default function HostApp() {
           </div>
         </div>
       </header>
+
+      <MusicPlayer />
 
       {!state ? (
         <p className="muted syncing">Syncing<span className="dot-1">.</span><span className="dot-2">.</span><span className="dot-3">.</span></p>
