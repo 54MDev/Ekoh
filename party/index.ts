@@ -226,6 +226,15 @@ export default class EchoServer implements Party.Server {
         this.broadcastState();
         return;
       }
+      case "targetTyping": {
+        if (this.state.phase !== "question" || !this.state.round) return;
+        if (sender.id !== this.state.round.targetId) return;
+        if (this.state.round.cloneRevealAt != null) return;
+        const delayMs = 5000 + Math.random() * 5000;
+        this.state.round.cloneRevealAt = Date.now() + delayMs;
+        this.broadcastState();
+        return;
+      }
       case "submitVote": {
         if (this.state.phase !== "vote" || !this.state.round) return;
         const voter = this.state.players[sender.id];
@@ -355,6 +364,7 @@ export default class EchoServer implements Party.Server {
       cloneAnswer: null,
       cloneStreaming: false,
       cloneError: null,
+      cloneRevealAt: null,
       answerAIsTarget: false,
       votes: {},
       scoreDeltas: {},
@@ -456,11 +466,19 @@ export default class EchoServer implements Party.Server {
       }
 
       if (!stillCurrent()) return;
-      // Hold the "answering…" state a beat longer so the clone doesn't pop
-      // "Ready" the instant OpenAI finishes — that timing was a giveaway.
-      const answerLen = this.state.round!.cloneAnswer?.length ?? 0;
-      const padMs = Math.min(8000, 2000 + answerLen * 40);
-      await new Promise((r) => setTimeout(r, padMs));
+      // Hold "answering…" until the target has been "typing" for the
+      // randomized 5–10s window. cloneRevealAt is set when the target's
+      // first keystroke hits the server. Safety timeout protects us if
+      // they never type (host can still abort).
+      const safetyDeadline = Date.now() + 60_000;
+      while (true) {
+        if (!stillCurrent()) return;
+        const revealAt = this.state.round?.cloneRevealAt;
+        const now = Date.now();
+        if (revealAt != null && now >= revealAt) break;
+        if (now >= safetyDeadline) break;
+        await new Promise((r) => setTimeout(r, 200));
+      }
       if (!stillCurrent()) return;
       this.state.round!.cloneStreaming = false;
       this.broadcastState();

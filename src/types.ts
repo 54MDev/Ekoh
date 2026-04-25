@@ -21,6 +21,7 @@ export interface RoundState {
   cloneAnswer: string | null;
   cloneStreaming: boolean;
   cloneError: string | null;
+  cloneRevealAt: number | null;
   answerAIsTarget: boolean;
   votes: Record<string, "A" | "B">;
   scoreDeltas: Record<string, number>;
@@ -44,7 +45,8 @@ export type ClientMessage =
   | { type: "submitVote"; vote: "A" | "B" }
   | { type: "advancePhase" }
   | { type: "abortRound" }
-  | { type: "newGame" };
+  | { type: "newGame" }
+  | { type: "targetTyping" };
 
 export type ServerMessage =
   | { type: "stateUpdate"; state: RoomState }

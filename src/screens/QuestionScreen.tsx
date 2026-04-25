@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import type { ClientMessage, Player, RoomState } from "../types";
 
 interface Props {
@@ -9,6 +9,7 @@ interface Props {
 
 export default function QuestionScreen({ state, me, send }: Props) {
   const [draft, setDraft] = useState("");
+  const sentTypingRef = useRef(false);
   const round = state.round;
   if (!round) return null;
 
@@ -29,7 +30,14 @@ export default function QuestionScreen({ state, me, send }: Props) {
           <div className="answer-form">
             <textarea
               value={draft}
-              onChange={(e) => setDraft(e.target.value)}
+              onChange={(e) => {
+                const value = e.target.value;
+                setDraft(value);
+                if (!sentTypingRef.current && value.trim().length > 0) {
+                  sentTypingRef.current = true;
+                  send({ type: "targetTyping" });
+                }
+              }}
               placeholder="Answer in your normal voice. 1–3 sentences."
               maxLength={500}
               rows={4}
