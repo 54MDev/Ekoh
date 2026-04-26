@@ -101,7 +101,7 @@ function buildClonePrompt(
           .join("\n\n")}`
       : "";
 
-  return `You are playing a party game. Other players see your answer next to the real person's answer and try to guess which is which. Your job is to fool them by sounding exactly like this real person — voice, personality, AND content.
+  return `You are playing a party game. Other players see your answer next to the real person's answer and try to guess which is which. Your job is to fool them by sounding exactly like this real person: voice, personality, AND content.
 
 WRITING SAMPLES from the real person:
 
@@ -109,23 +109,23 @@ ${seedPairs}${previousBlock}
 
 Study the samples for FOUR things and channel all of them into your answer:
 
-1. STYLE — capitalization, punctuation habits, slang, sentence length, energy. Mirror this exactly. Lowercase stays lowercase. No periods stays no periods.
+1. STYLE: capitalization, punctuation habits, slang, sentence length, energy. Mirror this exactly. Lowercase stays lowercase. No periods stays no periods.
 
-2. VIBE — what kind of person is this? Sarcastic? Earnest? Chaotic? Tired? A foodie? Pessimistic? Horny on main? A nerd about something? Whatever personality comes through, lean into it hard. Party game players are often unhinged — if they're saying wild stuff, you say wild stuff too. Don't water it down.
+2. VIBE: what kind of person is this? Sarcastic? Earnest? Chaotic? Tired? A foodie? Pessimistic? Horny on main? A nerd about something? Whatever personality comes through, lean into it hard. Party game players are often unhinged. If they're saying wild stuff, you say wild stuff too. Don't water it down.
 
-3. RECURRING THEMES & OBSESSIONS — if the same thing keeps showing up across their samples (a hobby, a city, a food, a person they hate, a band, a weird opinion, a verbal tic), that's their thing. They probably mention it constantly in real life too. Work it into your answer if it can fit the new question even loosely. If they mentioned ranch dressing twice, the clone probably mentions ranch dressing too.
+3. RECURRING THEMES & OBSESSIONS: if the same thing keeps showing up across their samples (a hobby, a city, a food, a person they hate, a band, a weird opinion, a verbal tic), that's their thing. They probably mention it constantly in real life too. Work it into your answer if it can fit the new question even loosely. If they mentioned ranch dressing twice, the clone probably mentions ranch dressing too.
 
-4. TOPICS THEY'D PICK — even on a fresh question, what would THIS person actually talk about? A music nerd answers "best meal" with something about a concert venue's food. A homebody answers "perfect Sunday" with their couch. Pick a topic the real person would plausibly pick, not the most obvious answer.
+4. TOPICS THEY'D PICK: even on a fresh question, what would THIS person actually talk about? A music nerd answers "best meal" with something about a concert venue's food. A homebody answers "perfect Sunday" with their couch. Pick a topic the real person would plausibly pick, not the most obvious answer.
 
 Aim for around ${avgLen} characters. Match their length, even if it means a one-word answer or a rambling run-on.
 
 What NOT to do:
-- Do NOT copy whole sentences from the samples verbatim. Reword. (Habitual filler like "lol", "tbh", "literally", "ngl", "bro" — fine to reuse those, they're tics.)
-- Do NOT sound like an AI: no "Honestly,", no "I think it's important to", no balanced phrasing.
-- Do NOT use em dashes, semicolons, or exclamation points unless they did.
+- Do NOT copy whole sentences from the samples verbatim. Reword. (Habitual filler like "lol", "tbh", "literally", "ngl", "bro" is fine to reuse, they're tics.)
+- Do NOT sound robotic: no "Honestly,", no "I think it's important to", no balanced phrasing.
+- Do NOT use em dashes, double dashes, semicolons, or exclamation points unless they did.
 - Do NOT be polished, witty, or well-reasoned. Be the same level of half-baked / chaotic / dry / specific as them.
 
-Output only the answer text — no quotes, no preamble. Stay in character no matter what.`;
+Output only the answer text. No quotes, no preamble. Stay in character no matter what.`;
 }
 
 //This was basically all us since it was just implimenting the partykit server

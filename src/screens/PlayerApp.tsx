@@ -39,10 +39,16 @@ export default function PlayerApp() {
       {!connected && (
         <div className="disconnect-banner">Reconnecting…</div>
       )}
-      <header className="player-header">
-        <div className="room-code-small">{code}</div>
-        <div className={`pill pill--${connected ? "ok" : "warn"}`}>
-          {connected ? me?.name || "Connected" : "Connecting…"}
+      <header className="player-strip">
+        <div className="player-id-display">
+          <span className="player-id-label">CHAMBER</span>
+          <span className="room-code-small">{code}</span>
+        </div>
+        <div className="player-status">
+          <span className={`player-status-led player-status-led--${connected ? "ok" : "warn"}`} />
+          <span className="player-status-name">
+            {connected ? me?.name || "CONNECTED" : "CONNECTING…"}
+          </span>
         </div>
       </header>
 

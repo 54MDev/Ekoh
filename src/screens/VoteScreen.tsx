@@ -19,7 +19,7 @@ export default function VoteScreen({ state, me, send }: Props) {
         <div className="phase-eyebrow">Voting</div>
         <h1 className="phase-title">The room is voting.</h1>
         <p className="phase-subtitle">
-          You can't vote on your own round — watch the host screen.
+          You can't vote on your own round. Watch the host screen.
         </p>
       </div>
     );

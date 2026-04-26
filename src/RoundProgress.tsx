@@ -11,7 +11,7 @@ function stageLabel(phase: Phase, roundNumber: number): string {
     vote: "Vote",
     results: "Results",
   };
-  return `Round ${roundNumber} — ${map[phase] ?? phase}`;
+  return `Round ${roundNumber} · ${map[phase] ?? phase}`;
 }
 
 export default function RoundProgress({

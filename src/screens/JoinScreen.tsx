@@ -57,10 +57,10 @@ export default function JoinScreen() {
           <span className="hero-tag-dot" /> SUBJECT-001 / VOICE CLONING TRIAL
         </p>
 
-        <p className="subtitle">Can your friends tell you from your AI clone?</p>
+        <p className="subtitle">Can your friends tell you from your clone?</p>
         <p className="join-blurb">
-          Each round, the target answers a question. An AI clone — trained to
-          sound exactly like them — takes the same shot. Everyone else votes:
+          Each round, the target answers a question. A clone, trained to
+          sound exactly like them, takes the same shot. Everyone else votes:
           which answer was real?
         </p>
 
