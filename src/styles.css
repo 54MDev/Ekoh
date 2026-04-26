@@ -442,12 +442,120 @@ input, button, textarea, select {
   background: rgba(26, 31, 61, 0.05);
 }
 
-/* ─── Lab keypad (right column) ─── */
+/* ─── Steel wall (right 1/3 of viewport) — keypad is mounted on it. ─── */
+
+.steel-wall {
+  position: relative;
+  flex-shrink: 0;
+  width: clamp(320px, 33vw, 440px);
+  align-self: stretch;
+  /* Pull out into the screen padding so it kisses the viewport edges. */
+  margin: -48px -32px -48px 0;
+  padding: 56px 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  /* Diamond-plate / treadplate texture — alternating rows of raised
+     diagonal "studs", each with a highlight and shadow for 3D depth. */
+  background:
+    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='34' height='34' viewBox='0 0 34 34'><g><rect x='2' y='4' width='12' height='3' rx='1.5' transform='rotate(-32 8 5.5)' fill='%23ffffff' fill-opacity='0.28'/><rect x='2' y='6.5' width='12' height='2.4' rx='1.2' transform='rotate(-32 8 7.7)' fill='%23000000' fill-opacity='0.35'/><rect x='19' y='4' width='12' height='3' rx='1.5' transform='rotate(-32 25 5.5)' fill='%23ffffff' fill-opacity='0.28'/><rect x='19' y='6.5' width='12' height='2.4' rx='1.2' transform='rotate(-32 25 7.7)' fill='%23000000' fill-opacity='0.35'/><rect x='10' y='21' width='12' height='3' rx='1.5' transform='rotate(32 16 22.5)' fill='%23ffffff' fill-opacity='0.28'/><rect x='10' y='23.5' width='12' height='2.4' rx='1.2' transform='rotate(32 16 24.7)' fill='%23000000' fill-opacity='0.35'/><rect x='-6' y='21' width='12' height='3' rx='1.5' transform='rotate(32 0 22.5)' fill='%23ffffff' fill-opacity='0.28'/><rect x='-6' y='23.5' width='12' height='2.4' rx='1.2' transform='rotate(32 0 24.7)' fill='%23000000' fill-opacity='0.35'/><rect x='27' y='21' width='12' height='3' rx='1.5' transform='rotate(32 33 22.5)' fill='%23ffffff' fill-opacity='0.28'/><rect x='27' y='23.5' width='12' height='2.4' rx='1.2' transform='rotate(32 33 24.7)' fill='%23000000' fill-opacity='0.35'/></g></svg>"),
+    /* slate base — lighter top/bottom, deep middle for cylindrical sheen */
+    linear-gradient(180deg,
+      #a8aebd 0%,
+      #7e8497 28%,
+      #595f72 52%,
+      #7e8497 78%,
+      #a8aebd 100%);
+  background-size: 34px 34px, 100% 100%;
+  background-repeat: repeat, no-repeat;
+
+  border-left: 4px solid #1a1f3d;
+  box-shadow:
+    inset 12px 0 24px -8px rgba(0, 0, 0, 0.45),
+    inset -2px 0 0 rgba(255, 255, 255, 0.18);
+}
+
+/* Subtle weld line / panel seam down the inner edge */
+.steel-wall::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 14px;
+  width: 1px;
+  background: linear-gradient(180deg, transparent, rgba(0, 0, 0, 0.25) 12%, rgba(0, 0, 0, 0.25) 88%, transparent);
+  pointer-events: none;
+}
+
+/* Stamped serial-plate label etched into the wall. */
+.steel-wall-plate {
+  position: absolute;
+  top: 22px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: var(--font-mono);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  color: rgba(26, 31, 61, 0.55);
+  text-transform: uppercase;
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.35);
+  white-space: nowrap;
+}
+
+/* Chrome screws at the four corners of the panel. */
+.steel-wall-screw {
+  position: absolute;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at 35% 28%, #f0f2f7 0%, #b0b6c4 35%, #6c7283 75%, #3a4053 100%);
+  border: 2px solid #1a1f3d;
+  box-shadow:
+    inset 0 -1.5px 2px rgba(0, 0, 0, 0.45),
+    inset 0 1px 1px rgba(255, 255, 255, 0.6),
+    0 1.5px 2px rgba(0, 0, 0, 0.35);
+}
+
+/* Phillips-style slot — single line at varying angles per screw. */
+.steel-wall-screw::before,
+.steel-wall-screw::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 18%;
+  right: 18%;
+  height: 2.5px;
+  background: #0a0e1c;
+  border-radius: 1px;
+  transform: translateY(-50%);
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.18);
+}
+.steel-wall-screw::after { transform: translateY(-50%) rotate(90deg); }
+
+.steel-wall-screw--tl { top: 14px; left: 14px; }
+.steel-wall-screw--tl::before { transform: translateY(-50%) rotate(28deg); }
+.steel-wall-screw--tl::after  { transform: translateY(-50%) rotate(118deg); }
+
+.steel-wall-screw--tr { top: 14px; right: 14px; }
+.steel-wall-screw--tr::before { transform: translateY(-50%) rotate(-22deg); }
+.steel-wall-screw--tr::after  { transform: translateY(-50%) rotate(68deg); }
+
+.steel-wall-screw--bl { bottom: 14px; left: 14px; }
+.steel-wall-screw--bl::before { transform: translateY(-50%) rotate(-40deg); }
+.steel-wall-screw--bl::after  { transform: translateY(-50%) rotate(50deg); }
+
+.steel-wall-screw--br { bottom: 14px; right: 14px; }
+.steel-wall-screw--br::before { transform: translateY(-50%) rotate(15deg); }
+.steel-wall-screw--br::after  { transform: translateY(-50%) rotate(105deg); }
+
+/* ─── Lab keypad (mounted on the steel wall) ─── */
 
 .keypad {
   flex-shrink: 0;
   width: 280px;
-  margin-right: 32px;
   padding: 16px 16px 18px;
   background:
     linear-gradient(180deg, #5a6378 0%, #3d4659 22%, #2a3245 50%, #3d4659 78%, #5a6378 100%);
@@ -456,7 +564,9 @@ input, button, textarea, select {
   box-shadow:
     inset 0 2px 0 rgba(255, 255, 255, 0.18),
     inset 0 -2px 0 rgba(0, 0, 0, 0.4),
-    0 12px 28px -8px rgba(26, 31, 61, 0.45);
+    /* deep cast shadow against the wall behind it */
+    0 14px 32px -6px rgba(0, 0, 0, 0.55),
+    0 2px 0 rgba(0, 0, 0, 0.5);
   display: flex;
   flex-direction: column;
   gap: 14px;
@@ -1579,46 +1689,6 @@ input, button, textarea, select {
   accent-color: var(--accent);
 }
 
-<<<<<<< HEAD
-/* ─────────── Responsive ─────────── */
-
-@media (max-width: 1080px) {
-  .screen--join {
-    flex-direction: column;
-    min-height: auto;
-    padding: 32px 20px 48px;
-    gap: 28px;
-    justify-content: flex-start;
-    align-items: center;
-  }
-  .echo-mark {
-    font-size: clamp(72px, 14vw, 140px);
-    align-self: flex-start;
-  }
-  .join-center {
-    align-items: center;
-    text-align: center;
-    flex-basis: auto;
-  }
-  .clipboard { transform: rotate(-1.5deg); }
-  .keypad { width: 100%; max-width: 320px; align-self: center; }
-}
-
-@media (max-width: 720px) {
-  .answers-grid { grid-template-columns: 1fr; }
-  .host-question { font-size: 28px; }
-  .host-room-code { font-size: 64px; }
-}
-
-@media (max-width: 480px) {
-  .screen { padding: 36px 18px 32px; gap: 22px; }
-  .phase { padding: 22px; }
-  .phase-title { font-size: 24px; }
-  .phase-question { font-size: 21px; }
-  .btn--vote { font-size: 44px; padding: 32px 0; }
-  .answer-form textarea, .seed-item textarea { min-height: 96px; font-size: 16px; }
-  .vote-buttons { gap: 10px; }
-=======
 /* Round progress bar */
 .round-progress {
   display: flex;
@@ -1670,5 +1740,145 @@ input, button, textarea, select {
 
 .btn--kick:hover {
   opacity: 1;
->>>>>>> 911ffe7fc6021303ad2fada5a0fb6e00f25a8b83
+}
+
+/* ─────────── Responsive ─────────── */
+
+/* Tablet and below — collapse 3-col join screen into a vertical stack. */
+@media (max-width: 1080px) {
+  .screen--join {
+    flex-direction: column;
+    min-height: auto;
+    padding: 28px 20px 40px;
+    gap: 24px;
+    justify-content: flex-start;
+    align-items: center;
+  }
+  .join-center {
+    align-items: center;
+    text-align: center;
+    flex-basis: auto;
+    width: 100%;
+    max-width: 420px;
+  }
+
+  /* Steel wall becomes a contained panel (no longer extends off-screen). */
+  .steel-wall {
+    width: 100%;
+    max-width: 380px;
+    align-self: center;
+    margin: 0;
+    padding: 30px 22px 24px;
+    border: 4px solid var(--fg);
+    border-left-width: 4px;
+    border-radius: 18px;
+    box-shadow:
+      inset 0 2px 0 rgba(255, 255, 255, 0.18),
+      inset 0 -2px 0 rgba(0, 0, 0, 0.4),
+      0 12px 28px -8px rgba(26, 31, 61, 0.45);
+  }
+  .steel-wall::before { display: none; }
+  .steel-wall-plate { top: 10px; font-size: 8px; }
+  .steel-wall-screw { width: 18px; height: 18px; }
+  .steel-wall-screw--tl { top: 10px; left: 10px; }
+  .steel-wall-screw--tr { top: 10px; right: 10px; }
+  .steel-wall-screw--bl { bottom: 10px; left: 10px; }
+  .steel-wall-screw--br { bottom: 10px; right: 10px; }
+
+  .keypad { width: 100%; max-width: none; }
+}
+
+/* Mobile portrait (≤640px) — purpose-built layout for phones. */
+@media (max-width: 640px) {
+  .screen--join {
+    padding: 22px 16px 36px;
+    gap: 22px;
+  }
+
+  /* Echo wordmark: single line on mobile (no cascade). */
+  .echo-mark {
+    align-self: center;
+    align-items: center;
+    font-size: clamp(72px, 19vw, 120px);
+    letter-spacing: -0.045em;
+    line-height: 0.9;
+  }
+  .echo-mark-line:nth-child(2),
+  .echo-mark-line:nth-child(3),
+  .echo-mark-line:nth-child(4) { display: none; }
+  .echo-mark-line:nth-child(1) {
+    transform: none;
+    text-shadow:
+      0 0.022em 0 #c8243f,
+      0 0.044em 0 #c8243f,
+      0 0.066em 0 #c8243f,
+      0 0.09em 0.02em rgba(26, 31, 61, 0.5),
+      0 0.14em 0.16em rgba(26, 31, 61, 0.35);
+  }
+
+  /* Hero tag, subtitle, blurb — tighter on phone. */
+  .hero-tag { font-size: 10px; padding: 5px 12px 5px 10px; }
+  .hero-tag-dot { width: 7px; height: 7px; }
+
+  .join-center .subtitle {
+    font-size: clamp(20px, 5.6vw, 24px);
+    max-width: 18ch;
+  }
+  .join-center .join-blurb {
+    font-size: 13.5px;
+    max-width: 36ch;
+  }
+
+  /* Clipboard: less tilt, slightly smaller. */
+  .clipboard {
+    max-width: 340px;
+    padding: 36px 16px 16px;
+    transform: rotate(-1deg);
+  }
+  .clipboard-paper { padding: 18px 18px 18px; }
+  .clipboard-paper .field input { font-size: 20px; padding: 6px 4px 8px; }
+  .clipboard-paper .btn { font-size: 16px; padding: 12px 16px; }
+
+  /* Steel wall: tighter padding, smaller plate/screws. */
+  .steel-wall {
+    max-width: 340px;
+    padding: 24px 16px 20px;
+    border-radius: 16px;
+  }
+  .steel-wall-plate { font-size: 8px; letter-spacing: 0.14em; }
+
+  .keypad { padding: 12px 12px 14px; gap: 12px; }
+  .keypad-screen { font-size: 22px; padding: 12px 10px 10px; }
+  .keypad-screen-prefix { font-size: 16px; }
+  .keypad-grid { gap: 7px; }
+  .keypad-key {
+    font-size: 19px;
+    padding: 12px 0 10px;
+    border-radius: 9px;
+  }
+  .keypad-key--enter { font-size: 22px; }
+}
+
+/* Very small phones (≤380px) — additional tightening. */
+@media (max-width: 380px) {
+  .echo-mark { font-size: clamp(60px, 22vw, 92px); }
+  .clipboard { max-width: 100%; }
+  .steel-wall { max-width: 100%; }
+}
+
+/* Other screens (host / phase / vote) — existing tweaks. */
+@media (max-width: 720px) {
+  .answers-grid { grid-template-columns: 1fr; }
+  .host-question { font-size: 28px; }
+  .host-room-code { font-size: 64px; }
+}
+
+@media (max-width: 480px) {
+  .screen { padding: 36px 18px 32px; gap: 22px; }
+  .phase { padding: 22px; }
+  .phase-title { font-size: 24px; }
+  .phase-question { font-size: 21px; }
+  .btn--vote { font-size: 44px; padding: 32px 0; }
+  .answer-form textarea, .seed-item textarea { min-height: 96px; font-size: 16px; }
+  .vote-buttons { gap: 10px; }
 }

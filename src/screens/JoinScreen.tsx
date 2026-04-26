@@ -95,7 +95,16 @@ export default function JoinScreen() {
         </div>
       </div>
 
-      {/* Lab keypad — right side. */}
+      {/* Steel wall on the right with the keypad mounted on it. */}
+      <aside className="steel-wall">
+        <span className="steel-wall-screw steel-wall-screw--tl" aria-hidden="true" />
+        <span className="steel-wall-screw steel-wall-screw--tr" aria-hidden="true" />
+        <span className="steel-wall-screw steel-wall-screw--bl" aria-hidden="true" />
+        <span className="steel-wall-screw steel-wall-screw--br" aria-hidden="true" />
+        <span className="steel-wall-plate" aria-hidden="true">
+          KEYPAD-Ø7 · CHAMBER ACCESS
+        </span>
+
       <div className="keypad">
         <div className="keypad-header">
           <span className="keypad-led" />
@@ -154,6 +163,7 @@ export default function JoinScreen() {
           </button>
         </div>
       </div>
+      </aside>
     </div>
   );
 }
