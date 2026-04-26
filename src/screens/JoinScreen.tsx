@@ -10,8 +10,6 @@ export default function JoinScreen() {
   const [name, setName] = useState("");
   const [error, setError] = useState<string | null>(null);
 
-  const code = digits ? `ECHO-${digits.padEnd(4, "_")}` : "ECHO-____";
-
   const pressDigit = (d: string) => {
     setError(null);
     setDigits((prev) => (prev.length >= 4 ? prev : prev + d));
