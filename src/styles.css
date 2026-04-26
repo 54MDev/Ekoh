@@ -942,6 +942,49 @@ input, button, textarea, select {
 
 /* ─────────── Pills ─────────── */
 
+.role-box {
+  margin-top: 8px;
+  padding: 16px 18px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.role-box[data-role="target"] {
+  border-color: var(--warn);
+}
+
+.role-box[data-role="spectator"] {
+  border-color: var(--accent);
+}
+
+.role-box-label {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1.2px;
+  color: var(--muted);
+}
+
+.role-box[data-role="target"] .role-box-label {
+  color: var(--warn);
+}
+
+.role-box[data-role="spectator"] .role-box-label {
+  color: var(--accent);
+}
+
+.role-box-description {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--fg);
+  opacity: 0.85;
+}
+
 .pill {
   font-family: var(--font-mono);
   padding: 4px 10px;
@@ -1536,6 +1579,7 @@ input, button, textarea, select {
   accent-color: var(--accent);
 }
 
+<<<<<<< HEAD
 /* ─────────── Responsive ─────────── */
 
 @media (max-width: 1080px) {
@@ -1574,4 +1618,57 @@ input, button, textarea, select {
   .btn--vote { font-size: 44px; padding: 32px 0; }
   .answer-form textarea, .seed-item textarea { min-height: 96px; font-size: 16px; }
   .vote-buttons { gap: 10px; }
+=======
+/* Round progress bar */
+.round-progress {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.round-progress-label {
+  font-size: 13px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--muted);
+  font-weight: 600;
+}
+
+.round-progress-track {
+  display: flex;
+  gap: 6px;
+}
+
+.round-progress-seg {
+  flex: 1;
+  height: 6px;
+  border-radius: 999px;
+  background: var(--border);
+  transition: background 0.3s;
+}
+
+.round-progress-seg--done {
+  background: var(--accent);
+  opacity: 0.5;
+}
+
+.round-progress-seg--active {
+  background: var(--accent);
+}
+
+.player-row-actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.btn--kick {
+  color: var(--warn);
+  border-color: var(--warn);
+  opacity: 0.7;
+}
+
+.btn--kick:hover {
+  opacity: 1;
+>>>>>>> 911ffe7fc6021303ad2fada5a0fb6e00f25a8b83
 }

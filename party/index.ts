@@ -230,6 +230,16 @@ export default class EchoServer implements Party.Server {
         this.broadcastState();
         return;
       }
+      case "kickPlayer": {
+        if (!this.isHost(sender)) return;
+        const kicked = this.state.players[msg.playerId];
+        if (!kicked || kicked.role === "host") return;
+        delete this.state.players[msg.playerId];
+        const conn = this.room.getConnection(msg.playerId);
+        conn?.close(1008, "Kicked by host");
+        this.broadcastState();
+        return;
+      }
       case "newGame": {
         if (!this.isHost(sender)) return;
         if (this.state.phase !== "end") return;

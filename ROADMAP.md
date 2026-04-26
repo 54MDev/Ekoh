@@ -100,6 +100,14 @@
 
 ---
 
+## Phase 8: Host Controls
+**Goal: Give the host more control over the room**
+
+- [x] Remove training depth slider — hardcoded at 2 seed questions, no UI needed
+- [x] Kick player — host can remove any non-host player from the lobby at any time (handles offline/ghost accounts)
+
+---
+
 ## Phase 7: Demo Prep (Sun 11 AM – 1 PM)
 - [ ] Run a full live round in the room — find and fix any rough edges
 - [ ] Prep 60-second pitch (use the framing from the summary doc)

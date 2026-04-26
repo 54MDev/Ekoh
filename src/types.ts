@@ -46,7 +46,8 @@ export type ClientMessage =
   | { type: "advancePhase" }
   | { type: "abortRound" }
   | { type: "newGame" }
-  | { type: "targetTyping" };
+  | { type: "targetTyping" }
+  | { type: "kickPlayer"; playerId: string };
 
 export type ServerMessage =
   | { type: "stateUpdate"; state: RoomState }
