@@ -50,13 +50,13 @@ export default function ResultsScreen({ state, me }: Props) {
 
           {myVote != null && (
             <p className="phase-subtitle">
-              You voted {myVote} —{" "}
-              {votedCorrectly ? "correct! +1 point" : "fooled by the clone."}
+              You voted {myVote}.{" "}
+              {votedCorrectly ? "Correct! +1 point" : "Fooled by the clone."}
             </p>
           )}
 
           {myDelta > 0 && me?.role === "target" && (
-            <p className="phase-subtitle">You fooled {myDelta / 2} player{myDelta / 2 !== 1 ? "s" : ""} — +{myDelta} points!</p>
+            <p className="phase-subtitle">You fooled {myDelta / 2} player{myDelta / 2 !== 1 ? "s" : ""}. +{myDelta} points!</p>
           )}
         </>
       )}

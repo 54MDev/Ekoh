@@ -83,16 +83,31 @@ export default function HostApp() {
       {!connected && (
         <div className="disconnect-banner">Reconnecting…</div>
       )}
-      <header className="host-header">
-        <div>
-          <h1 className="host-room-code">{code}</h1>
-          <p className="host-join-url">Join at echo-azd.pages.dev</p>
-        </div>
-        <div className="host-header-right">
-          <div className="phase-eyebrow">Phase</div>
-          <div className="host-phase">{PHASE_LABELS[phase]}</div>
-          <div className={`pill pill--${connected ? "ok" : "warn"}`}>
-            {connected ? "Connected" : "Connecting…"}
+      <header className="host-control-strip">
+        <span className="steel-wall-screw steel-wall-screw--tl" aria-hidden="true" />
+        <span className="steel-wall-screw steel-wall-screw--tr" aria-hidden="true" />
+        <span className="steel-wall-screw steel-wall-screw--bl" aria-hidden="true" />
+        <span className="steel-wall-screw steel-wall-screw--br" aria-hidden="true" />
+        <span className="steel-wall-plate" aria-hidden="true">
+          CONTROL · OPERATOR TERMINAL
+        </span>
+        <div className="host-header">
+          <div className="host-id-display">
+            <span className="host-id-label">CHAMBER · ID</span>
+            <h1 className="host-room-code">{code}</h1>
+            <p className="host-join-url">Join at echo-azd.pages.dev</p>
+          </div>
+          <div className="host-header-right">
+            <div className="host-phase-display">
+              <span className="host-phase-led" />
+              <div>
+                <div className="phase-eyebrow">Phase</div>
+                <div className="host-phase">{PHASE_LABELS[phase]}</div>
+              </div>
+            </div>
+            <div className={`pill pill--${connected ? "ok" : "warn"}`}>
+              {connected ? "Connected" : "Connecting…"}
+            </div>
           </div>
         </div>
       </header>
@@ -253,7 +268,7 @@ function HostSeed({ state }: { state: RoomState }) {
   const allDone = answered >= total;
   return (
     <section className="host-section">
-      <h2>Seed phase — Round {state.roundNumber}</h2>
+      <h2>Seed phase · Round {state.roundNumber}</h2>
       <p className="host-big">{target?.name ?? "Target"} is teaching the clone…</p>
       <p className={`host-seed-progress ${allDone ? "host-seed-progress--done" : ""}`}>
         {allDone

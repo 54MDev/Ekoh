@@ -6,7 +6,7 @@ interface Props {
 
 export default function StreamingText({ text, streaming, placeholder }: Props) {
   if (!text && !streaming) {
-    return <p className="stream-empty">{placeholder ?? "—"}</p>;
+    return <p className="stream-empty">{placeholder ?? "..."}</p>;
   }
   return (
     <p className="stream">

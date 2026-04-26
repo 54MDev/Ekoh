@@ -54,8 +54,9 @@ body {
   position: relative;
 }
 
-/* Cellular mitosis pattern — pairs of dividing cells (parent + clone) and a
-   tiny nucleus dot inside each. Drifts slowly. On theme: cloning. */
+/* Single cell pattern — one big light cell body with a darker nucleus
+   dot inside, repeating across the bg. On theme: cells viewed under a
+   microscope. */
 body::before {
   content: "";
   position: fixed;
@@ -63,22 +64,22 @@ body::before {
   pointer-events: none;
   z-index: -1;
   background-image:
-    /* big parent cell */
-    radial-gradient(circle at 30% 50%, rgba(255, 255, 255, 0.16) 0 16px, transparent 17px),
-    /* clone — slightly smaller, slightly faded */
-    radial-gradient(circle at 65% 50%, rgba(255, 255, 255, 0.10) 0 14px, transparent 15px),
-    /* nucleus inside parent */
-    radial-gradient(circle at 30% 50%, rgba(26, 31, 61, 0.18) 0 4px, transparent 5px),
-    /* nucleus inside clone */
-    radial-gradient(circle at 65% 50%, rgba(26, 31, 61, 0.12) 0 3px, transparent 4px);
-  background-size: 160px 160px;
+    /* cell body */
+    radial-gradient(circle at 50% 50%,
+      rgba(255, 255, 255, 0.18) 0 16px,
+      transparent 17px),
+    /* nucleus inside */
+    radial-gradient(circle at 50% 50%,
+      rgba(26, 31, 61, 0.22) 0 4px,
+      transparent 5px);
+  background-size: 96px 96px;
   background-position: 0 0;
-  animation: cells-drift 90s linear infinite;
+  animation: cells-drift 18s linear infinite;
 }
 
 @keyframes cells-drift {
   from { background-position: 0 0; }
-  to   { background-position: 160px 160px; }
+  to   { background-position: 96px 96px; }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -107,8 +108,15 @@ input, button, textarea, select {
 }
 
 .screen--host {
-  max-width: 1100px;
-  padding: 48px 40px;
+  max-width: 1180px;
+  padding: 32px 32px 48px;
+  gap: 18px;
+}
+
+.screen--player {
+  max-width: 560px;
+  padding: 20px 18px 36px;
+  gap: 16px;
 }
 
 /* Join screen: 3 columns — logo (far left) · clipboard (center) · keypad (right). */
@@ -866,24 +874,32 @@ input, button, textarea, select {
 
 .field input,
 .broadcast-input input {
-  background: var(--card);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
+  background: #fffcf0;
+  border: 2.5px dashed rgba(26, 31, 61, 0.4);
+  border-radius: 6px;
   padding: 12px 14px;
-  font-size: 16px;
-  font-weight: 500;
+  font-family: var(--font-serif);
+  font-size: 18px;
+  font-weight: 600;
   color: var(--fg);
   outline: none;
-  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.08);
+  transition: border-color 0.15s ease, border-style 0.15s ease, box-shadow 0.15s ease;
 }
 
 .field input::placeholder,
-.broadcast-input input::placeholder { color: var(--muted-soft); }
+.broadcast-input input::placeholder {
+  color: rgba(26, 31, 61, 0.32);
+  font-weight: 500;
+}
 
 .field input:focus,
 .broadcast-input input:focus {
   border-color: var(--accent);
-  box-shadow: 0 0 0 3px rgba(201, 100, 66, 0.15);
+  border-style: solid;
+  box-shadow:
+    inset 0 2px 4px rgba(0, 0, 0, 0.06),
+    0 0 0 3px rgba(255, 59, 92, 0.18);
 }
 
 /* ─────────── Buttons ─────────── */
@@ -927,9 +943,57 @@ input, button, textarea, select {
 }
 
 .btn--big {
-  font-size: 16px;
-  padding: 14px 28px;
-  min-width: 240px;
+  font-family: var(--font-mono);
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  padding: 18px 36px;
+  min-width: 280px;
+  border: 3px solid var(--fg);
+  border-radius: 12px;
+  background:
+    radial-gradient(120% 80% at 50% 0%,
+      rgba(255, 255, 255, 0.4) 0%,
+      rgba(255, 255, 255, 0) 60%),
+    linear-gradient(180deg,
+      var(--accent) 0%,
+      var(--accent) 50%,
+      #d12a4b 100%);
+  color: #fff;
+  box-shadow:
+    0 6px 0 #8a1c33,
+    0 10px 18px -4px rgba(0, 0, 0, 0.35),
+    inset 0 1.5px 0 rgba(255, 255, 255, 0.5),
+    inset 0 -2px 0 rgba(0, 0, 0, 0.2);
+  transition: transform 0.08s ease, box-shadow 0.08s ease, background 0.12s ease;
+}
+
+.btn--big:hover:not(:disabled) {
+  background:
+    radial-gradient(120% 80% at 50% 0%, rgba(255, 255, 255, 0.5) 0%, rgba(255, 255, 255, 0) 60%),
+    linear-gradient(180deg, #ff5874 0%, #ff4068 50%, #e23854 100%);
+  transform: translateY(-1px);
+  box-shadow:
+    0 7px 0 #8a1c33,
+    0 12px 22px -4px rgba(0, 0, 0, 0.4),
+    inset 0 1.5px 0 rgba(255, 255, 255, 0.5),
+    inset 0 -2px 0 rgba(0, 0, 0, 0.2);
+}
+
+.btn--big:active:not(:disabled) {
+  transform: translateY(4px);
+  box-shadow:
+    0 2px 0 #8a1c33,
+    0 3px 6px -1px rgba(0, 0, 0, 0.3),
+    inset 0 1.5px 0 rgba(255, 255, 255, 0.4),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.18);
+}
+
+.btn--big:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  filter: grayscale(0.4);
 }
 
 .btn--abort {
@@ -952,15 +1016,38 @@ input, button, textarea, select {
 /* ─────────── Cards (player phase) ─────────── */
 
 .phase {
+  position: relative;
   background: var(--card);
-  border: 1px solid var(--border);
+  border: 3px solid var(--fg);
   border-radius: var(--radius-lg);
-  padding: 28px;
+  padding: 38px 22px 22px;
   display: flex;
   flex-direction: column;
   gap: 16px;
+  box-shadow: 0 6px 0 rgba(26, 31, 61, 0.18), 0 14px 28px -10px rgba(26, 31, 61, 0.3);
 }
 
+/* Yellow lab-tape strip across the top of every phase card.
+   Scoped to direct children of .phase so it doesn't bleed into the
+   host control strip's nested .phase-eyebrow inside the LCD panel. */
+.phase > .phase-eyebrow {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  font-family: var(--font-mono);
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--fg);
+  background: var(--accent-2);
+  padding: 6px 18px;
+  border-bottom: 2px solid var(--fg);
+  border-radius: calc(var(--radius-lg) - 3px) calc(var(--radius-lg) - 3px) 0 0;
+}
+
+/* Default eyebrow style for any other context (host LCD, etc.) — plain. */
 .phase-eyebrow {
   font-family: var(--font-mono);
   text-transform: uppercase;
@@ -1007,7 +1094,7 @@ input, button, textarea, select {
   text-transform: uppercase;
 }
 
-/* ─────────── Player list ─────────── */
+/* ─────────── Player list (subjects tray) ─────────── */
 
 .player-list {
   list-style: none;
@@ -1015,20 +1102,51 @@ input, button, textarea, select {
   padding: 0;
   display: flex;
   flex-direction: column;
-  gap: 1px;
+  gap: 6px;
 }
 
 .player-list li {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 14px 4px;
-  font-size: 15px;
-  font-weight: 500;
+  gap: 12px;
+  padding: 12px 16px 12px 32px;
+  font-size: 16px;
+  font-weight: 600;
   color: var(--fg);
-  border-bottom: 1px solid var(--border-soft);
+  background: var(--bg-sunken);
+  border: 1.5px solid var(--border);
+  border-radius: 10px;
+  position: relative;
 }
-.player-list li:last-child { border-bottom: none; }
+
+/* Status LED on the left of every row. */
+.player-list li::before {
+  content: "";
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--ok);
+  box-shadow: 0 0 6px rgba(30, 196, 134, 0.7);
+  transform: translateY(-50%);
+}
+
+.player-list li.player--gone::before {
+  background: var(--muted);
+  box-shadow: none;
+}
+
+.player-list li.player--target {
+  background: rgba(255, 201, 51, 0.18);
+  border-color: var(--accent-2);
+}
+.player-list li.player--target::before {
+  background: var(--accent-2);
+  box-shadow: 0 0 8px rgba(255, 201, 51, 0.8);
+}
 
 .player-row {
   display: flex;
@@ -1038,8 +1156,19 @@ input, button, textarea, select {
 }
 
 .player--gone { opacity: 0.4; }
-.player--me { color: var(--accent); font-weight: 600; }
-.player--target { color: var(--accent); font-weight: 600; }
+.player--me { color: var(--accent); font-weight: 700; }
+.player--target { color: var(--accent); font-weight: 700; }
+
+/* When me appears in the player-list inside the lobby, give it a coral
+   accent border so it's instantly findable. */
+.player-list li.player--me {
+  border-color: var(--accent);
+  background: var(--accent-tint);
+}
+.player-list li.player--me::before {
+  background: var(--accent);
+  box-shadow: 0 0 8px rgba(255, 59, 92, 0.7);
+}
 
 .player-role {
   font-family: var(--font-mono);
@@ -1052,47 +1181,84 @@ input, button, textarea, select {
 
 /* ─────────── Pills ─────────── */
 
+/* ─── Role assignment card (lab clearance badge) ─── */
+
 .role-box {
-  margin-top: 8px;
-  padding: 16px 18px;
-  background: var(--card);
-  border: 1px solid var(--border);
-  border-radius: 12px;
+  position: relative;
+  margin-top: 12px;
+  padding: 28px 18px 18px;
+  background: var(--bg-sunken);
+  border: 2.5px solid var(--fg);
+  border-radius: 14px;
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 10px;
+  box-shadow: 0 4px 0 rgba(26, 31, 61, 0.18);
 }
 
-.role-box[data-role="target"] {
-  border-color: var(--warn);
+/* Stamped tag across the top — color shifts per role. */
+.role-box-tag {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  font-family: var(--font-mono);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  color: var(--fg);
+  background: var(--muted-soft);
+  padding: 5px 14px;
+  text-transform: uppercase;
+  border-bottom: 2px solid var(--fg);
+  border-radius: 11px 11px 0 0;
+}
+.role-box[data-role="host"] .role-box-tag    { background: var(--accent-3); }
+.role-box[data-role="target"] .role-box-tag  { background: var(--accent); color: #fff; }
+.role-box[data-role="spectator"] .role-box-tag { background: var(--accent-2); }
+
+.role-box-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
 
-.role-box[data-role="spectator"] {
-  border-color: var(--accent);
+.role-box-led {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--muted);
+  flex-shrink: 0;
+  animation: pulse-dot 1.6s ease-in-out infinite;
+}
+.role-box[data-role="host"] .role-box-led {
+  background: var(--accent-3);
+  box-shadow: 0 0 8px var(--accent-3);
+}
+.role-box[data-role="target"] .role-box-led {
+  background: var(--accent);
+  box-shadow: 0 0 8px var(--accent);
+}
+.role-box[data-role="spectator"] .role-box-led {
+  background: var(--accent-2);
+  box-shadow: 0 0 8px var(--accent-2);
 }
 
 .role-box-label {
-  font-size: 11px;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 1.2px;
-  color: var(--muted);
-}
-
-.role-box[data-role="target"] .role-box-label {
-  color: var(--warn);
-}
-
-.role-box[data-role="spectator"] .role-box-label {
-  color: var(--accent);
+  font-family: var(--font-serif);
+  font-size: 26px;
+  font-weight: 800;
+  letter-spacing: -0.015em;
+  color: var(--fg);
+  line-height: 1;
 }
 
 .role-box-description {
   margin: 0;
-  font-size: 14px;
+  font-size: 14.5px;
   line-height: 1.5;
-  color: var(--fg);
-  opacity: 0.85;
+  color: var(--fg-soft);
+  font-weight: 500;
 }
 
 .pill {
@@ -1110,47 +1276,176 @@ input, button, textarea, select {
 .pill--ok { border-color: var(--ok); color: var(--ok); background: rgba(92, 138, 79, 0.08); }
 .pill--warn { border-color: var(--warn); color: var(--warn); background: rgba(184, 115, 47, 0.08); }
 
-/* ─────────── Host header ─────────── */
+/* ─────────── Host control strip (steel-frame header) ─────────── */
+
+.host-control-strip {
+  position: relative;
+  padding: 38px 32px 28px;
+  border: 4px solid var(--fg);
+  border-radius: 18px;
+  margin-bottom: 8px;
+  background:
+    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='34' height='34' viewBox='0 0 34 34'><g><rect x='2' y='4' width='12' height='3' rx='1.5' transform='rotate(-32 8 5.5)' fill='%23ffffff' fill-opacity='0.28'/><rect x='2' y='6.5' width='12' height='2.4' rx='1.2' transform='rotate(-32 8 7.7)' fill='%23000000' fill-opacity='0.35'/><rect x='19' y='4' width='12' height='3' rx='1.5' transform='rotate(-32 25 5.5)' fill='%23ffffff' fill-opacity='0.28'/><rect x='19' y='6.5' width='12' height='2.4' rx='1.2' transform='rotate(-32 25 7.7)' fill='%23000000' fill-opacity='0.35'/><rect x='10' y='21' width='12' height='3' rx='1.5' transform='rotate(32 16 22.5)' fill='%23ffffff' fill-opacity='0.28'/><rect x='10' y='23.5' width='12' height='2.4' rx='1.2' transform='rotate(32 16 24.7)' fill='%23000000' fill-opacity='0.35'/><rect x='-6' y='21' width='12' height='3' rx='1.5' transform='rotate(32 0 22.5)' fill='%23ffffff' fill-opacity='0.28'/><rect x='-6' y='23.5' width='12' height='2.4' rx='1.2' transform='rotate(32 0 24.7)' fill='%23000000' fill-opacity='0.35'/><rect x='27' y='21' width='12' height='3' rx='1.5' transform='rotate(32 33 22.5)' fill='%23ffffff' fill-opacity='0.28'/><rect x='27' y='23.5' width='12' height='2.4' rx='1.2' transform='rotate(32 33 24.7)' fill='%23000000' fill-opacity='0.35'/></g></svg>"),
+    linear-gradient(180deg, #a8aebd 0%, #7e8497 28%, #595f72 52%, #7e8497 78%, #a8aebd 100%);
+  background-size: 34px 34px, 100% 100%;
+  background-repeat: repeat, no-repeat;
+  box-shadow:
+    inset 0 2px 0 rgba(255, 255, 255, 0.18),
+    inset 0 -2px 0 rgba(0, 0, 0, 0.4),
+    0 14px 32px -10px rgba(0, 0, 0, 0.45);
+}
+
+.host-control-strip .steel-wall-screw {
+  position: absolute;
+}
+.host-control-strip .steel-wall-screw--tl { top: 12px; left: 12px; }
+.host-control-strip .steel-wall-screw--tr { top: 12px; right: 12px; }
+.host-control-strip .steel-wall-screw--bl { bottom: 12px; left: 12px; }
+.host-control-strip .steel-wall-screw--br { bottom: 12px; right: 12px; }
+
+.host-control-strip .steel-wall-plate {
+  position: absolute;
+  top: 14px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  color: rgba(26, 31, 61, 0.6);
+  text-transform: uppercase;
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.4);
+  white-space: nowrap;
+}
 
 .host-header {
   display: flex;
   justify-content: space-between;
-  align-items: flex-start;
-  gap: 24px;
-  padding-bottom: 12px;
+  align-items: stretch;
+  gap: 18px;
+  padding: 0;
 }
+
+/* ─── CHAMBER ID — LCD-style display for the room code ─── */
+
+.host-id-display {
+  flex: 1;
+  background: #0e1626;
+  border: 2px solid #000;
+  border-radius: 10px;
+  padding: 14px 22px 16px;
+  box-shadow:
+    inset 0 2px 8px rgba(0, 0, 0, 0.7),
+    inset 0 -1px 0 rgba(94, 234, 212, 0.2);
+  background-image:
+    repeating-linear-gradient(0deg, transparent 0 2px, rgba(94, 234, 212, 0.04) 2px 3px);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.host-id-label {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  color: rgba(94, 234, 212, 0.55);
+  text-transform: uppercase;
+}
+
+.host-room-code {
+  font-family: var(--font-mono);
+  font-size: clamp(48px, 7vw, 88px);
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  line-height: 1;
+  margin: 2px 0 0;
+  color: #5eead4;
+  text-shadow:
+    0 0 8px rgba(94, 234, 212, 0.7),
+    0 0 24px rgba(94, 234, 212, 0.35);
+}
+
+.host-join-url {
+  font-family: var(--font-mono);
+  color: rgba(94, 234, 212, 0.55);
+  font-size: 12px;
+  font-weight: 700;
+  margin: 6px 0 0;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+/* ─── PHASE display — small LED status panel ─── */
 
 .host-header-right {
   display: flex;
   flex-direction: column;
-  align-items: flex-end;
+  align-items: stretch;
+  justify-content: space-between;
   gap: 8px;
+  flex-shrink: 0;
 }
 
-.host-room-code {
-  font-family: var(--font-serif);
-  font-size: 112px;
-  font-weight: 800;
-  letter-spacing: -0.02em;
-  line-height: 0.92;
-  margin: 0;
-  color: var(--on-bg);
+.host-phase-display {
+  background: #0e1626;
+  border: 2px solid #000;
+  border-radius: 10px;
+  padding: 12px 18px 14px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 200px;
+  box-shadow:
+    inset 0 2px 8px rgba(0, 0, 0, 0.7),
+    inset 0 -1px 0 rgba(255, 201, 51, 0.2);
+  background-image:
+    repeating-linear-gradient(0deg, transparent 0 2px, rgba(255, 201, 51, 0.04) 2px 3px);
 }
 
-.host-join-url {
-  color: var(--on-bg-soft);
-  font-size: 15px;
-  font-weight: 500;
-  margin: 8px 0 0;
-  letter-spacing: 0.005em;
+.host-phase-led {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--accent-2);
+  box-shadow: 0 0 10px var(--accent-2), inset 0 0 3px rgba(255, 255, 255, 0.6);
+  animation: pulse-dot 1.6s ease-in-out infinite;
+  flex-shrink: 0;
+}
+
+.host-phase-display .phase-eyebrow {
+  font-family: var(--font-mono);
+  color: rgba(255, 201, 51, 0.55);
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  margin-bottom: 1px;
 }
 
 .host-phase {
-  font-family: var(--font-serif);
-  font-size: 26px;
-  font-weight: 800;
-  letter-spacing: -0.01em;
-  color: var(--on-bg);
+  font-family: var(--font-mono);
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: var(--accent-2);
+  text-shadow: 0 0 8px rgba(255, 201, 51, 0.5);
+  text-transform: uppercase;
+}
+
+.host-control-strip .pill {
+  align-self: flex-end;
+  background: rgba(0, 0, 0, 0.25);
+  border-color: rgba(0, 0, 0, 0.4);
+}
+.host-control-strip .pill--ok {
+  border-color: var(--ok);
+  color: var(--ok);
+  background: rgba(30, 196, 134, 0.15);
+}
+.host-control-strip .pill--warn {
+  border-color: var(--warn);
+  color: var(--warn);
+  background: rgba(255, 122, 46, 0.15);
 }
 
 .room-code-small {
@@ -1160,24 +1455,36 @@ input, button, textarea, select {
   font-weight: 800;
 }
 
-/* ─────────── Host sections ─────────── */
+/* ─────────── Host sections (lab modules) ─────────── */
 
 .host-section {
+  position: relative;
   background: var(--card);
-  border: 1px solid var(--border);
+  border: 3px solid var(--fg);
   border-radius: var(--radius-lg);
-  padding: 24px;
+  padding: 38px 26px 26px;
   margin-bottom: 16px;
+  box-shadow: 0 6px 0 rgba(26, 31, 61, 0.2), 0 14px 28px -10px rgba(26, 31, 61, 0.3);
 }
 
+/* Yellow lab-tape strip across the top of every host section — like the
+   join-screen clipboard header. */
 .host-section h2 {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
   font-family: var(--font-mono);
-  margin: 0 0 16px;
-  font-size: 11px;
-  color: var(--muted);
+  margin: 0;
+  font-size: 10px;
+  color: var(--fg);
+  background: var(--accent-2);
   font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.16em;
+  padding: 6px 22px;
+  border-bottom: 2px solid var(--fg);
+  border-radius: calc(var(--radius-lg) - 3px) calc(var(--radius-lg) - 3px) 0 0;
 }
 
 .host-big {
@@ -1256,6 +1563,100 @@ input, button, textarea, select {
   align-items: center;
 }
 
+/* ─── Player terminal strip (mini control panel for phones) ─── */
+
+.player-strip {
+  display: flex;
+  align-items: stretch;
+  gap: 10px;
+  padding: 10px;
+  border: 3px solid var(--fg);
+  border-radius: 14px;
+  background:
+    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='34' height='34' viewBox='0 0 34 34'><g><rect x='2' y='4' width='12' height='3' rx='1.5' transform='rotate(-32 8 5.5)' fill='%23ffffff' fill-opacity='0.28'/><rect x='2' y='6.5' width='12' height='2.4' rx='1.2' transform='rotate(-32 8 7.7)' fill='%23000000' fill-opacity='0.35'/><rect x='19' y='4' width='12' height='3' rx='1.5' transform='rotate(-32 25 5.5)' fill='%23ffffff' fill-opacity='0.28'/><rect x='19' y='6.5' width='12' height='2.4' rx='1.2' transform='rotate(-32 25 7.7)' fill='%23000000' fill-opacity='0.35'/><rect x='10' y='21' width='12' height='3' rx='1.5' transform='rotate(32 16 22.5)' fill='%23ffffff' fill-opacity='0.28'/><rect x='10' y='23.5' width='12' height='2.4' rx='1.2' transform='rotate(32 16 24.7)' fill='%23000000' fill-opacity='0.35'/><rect x='-6' y='21' width='12' height='3' rx='1.5' transform='rotate(32 0 22.5)' fill='%23ffffff' fill-opacity='0.28'/><rect x='-6' y='23.5' width='12' height='2.4' rx='1.2' transform='rotate(32 0 24.7)' fill='%23000000' fill-opacity='0.35'/><rect x='27' y='21' width='12' height='3' rx='1.5' transform='rotate(32 33 22.5)' fill='%23ffffff' fill-opacity='0.28'/><rect x='27' y='23.5' width='12' height='2.4' rx='1.2' transform='rotate(32 33 24.7)' fill='%23000000' fill-opacity='0.35'/></g></svg>"),
+    linear-gradient(180deg, #a8aebd 0%, #7e8497 28%, #595f72 52%, #7e8497 78%, #a8aebd 100%);
+  background-size: 34px 34px, 100% 100%;
+  background-repeat: repeat, no-repeat;
+  box-shadow:
+    inset 0 2px 0 rgba(255, 255, 255, 0.18),
+    inset 0 -2px 0 rgba(0, 0, 0, 0.4),
+    0 8px 18px -6px rgba(0, 0, 0, 0.4);
+}
+
+.player-id-display {
+  flex: 1;
+  background: #0e1626;
+  border: 2px solid #000;
+  border-radius: 8px;
+  padding: 8px 14px 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  min-width: 0;
+  background-image:
+    repeating-linear-gradient(0deg, transparent 0 2px, rgba(94, 234, 212, 0.04) 2px 3px);
+  box-shadow:
+    inset 0 2px 6px rgba(0, 0, 0, 0.6),
+    inset 0 -1px 0 rgba(94, 234, 212, 0.18);
+}
+
+.player-id-label {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  color: rgba(94, 234, 212, 0.5);
+  text-transform: uppercase;
+}
+
+.player-strip .room-code-small {
+  font-family: var(--font-mono);
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: #5eead4;
+  text-shadow: 0 0 6px rgba(94, 234, 212, 0.65);
+  line-height: 1;
+}
+
+.player-status {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 12px;
+  background: rgba(0, 0, 0, 0.3);
+  border: 2px solid #000;
+  border-radius: 8px;
+  flex-shrink: 0;
+}
+
+.player-status-led {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--ok);
+  box-shadow: 0 0 6px var(--ok), inset 0 0 2px rgba(255, 255, 255, 0.6);
+  animation: pulse-dot 1.6s ease-in-out infinite;
+}
+
+.player-status-led--warn {
+  background: var(--warn);
+  box-shadow: 0 0 6px var(--warn), inset 0 0 2px rgba(255, 255, 255, 0.6);
+}
+
+.player-status-name {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: var(--on-bg);
+  text-transform: uppercase;
+  max-width: 12ch;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 /* ─────────── Answer form ─────────── */
 
 .answer-form {
@@ -1264,26 +1665,41 @@ input, button, textarea, select {
   gap: 10px;
 }
 
+/* Lab notebook paper — cream background with faint blue ruled lines,
+   dashed navy border, recessed inset shadow. */
 .answer-form textarea {
-  background: var(--card);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: 14px 16px;
-  font: inherit;
+  background-color: #fffcf0;
+  background-image:
+    repeating-linear-gradient(
+      transparent 0 27px,
+      rgba(45, 178, 255, 0.16) 27px 28px
+    );
+  background-size: 100% 28px;
+  border: 2.5px dashed rgba(26, 31, 61, 0.4);
+  border-radius: 6px;
+  padding: 12px 14px;
+  font-family: var(--font-serif);
   color: var(--fg);
-  font-size: 16px;
-  font-weight: 450;
-  line-height: 1.5;
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 28px;
   resize: vertical;
-  min-height: 110px;
+  min-height: 112px;
   outline: none;
-  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.08);
+  transition: border-color 0.15s ease, border-style 0.15s ease, box-shadow 0.15s ease;
 }
 
-.answer-form textarea::placeholder { color: var(--muted-soft); }
+.answer-form textarea::placeholder {
+  color: rgba(26, 31, 61, 0.32);
+  font-weight: 500;
+}
 .answer-form textarea:focus {
   border-color: var(--accent);
-  box-shadow: 0 0 0 3px rgba(201, 100, 66, 0.15);
+  border-style: solid;
+  box-shadow:
+    inset 0 2px 4px rgba(0, 0, 0, 0.06),
+    0 0 0 3px rgba(255, 59, 92, 0.18);
 }
 
 /* ─────────── Vote buttons (A / B) ─────────── */
@@ -1507,81 +1923,235 @@ input, button, textarea, select {
   30% { opacity: 1; }
 }
 
-/* ─────────── Seed form ─────────── */
+/* ─────────── Seed clipboard (target's training form) ─────────── */
+
+.seed-clipboard {
+  position: relative;
+  width: 100%;
+  margin-top: 22px;
+  background: #d4b489;
+  border: 3px solid var(--fg);
+  border-radius: 8px;
+  padding: 38px 18px 18px;
+  box-shadow:
+    0 8px 0 rgba(26, 31, 61, 0.18),
+    0 16px 32px -10px rgba(26, 31, 61, 0.35);
+}
+
+/* Wood-grain hatch on the manila board. */
+.seed-clipboard::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: repeating-linear-gradient(
+    90deg,
+    rgba(0, 0, 0, 0.04) 0 1px,
+    transparent 1px 14px
+  );
+  pointer-events: none;
+}
+
+.seed-clipboard-clip {
+  position: absolute;
+  top: -16px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 130px;
+  height: 32px;
+  background: linear-gradient(180deg, #e3e6ee 0%, #b6bcca 35%, #6b7388 65%, #b6bcca 100%);
+  border: 3px solid var(--fg);
+  border-radius: 8px 8px 14px 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2;
+}
+
+.seed-clipboard-clip-rivet {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 30% 30%, #5a6378, #1a1f3d);
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.4);
+}
+
+.seed-clipboard-paper {
+  position: relative;
+  z-index: 1;
+  background-color: #fffcf0;
+  background-image:
+    repeating-linear-gradient(
+      transparent 0 27px,
+      rgba(45, 178, 255, 0.16) 27px 28px
+    );
+  background-size: 100% 28px;
+  border: 2px solid rgba(26, 31, 61, 0.18);
+  border-radius: 4px;
+  padding: 24px 24px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.seed-clipboard-header {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  color: var(--accent);
+  margin: 0;
+  text-transform: uppercase;
+  border-bottom: 2px solid var(--fg);
+  padding-bottom: 8px;
+}
+
+.seed-clipboard-title {
+  font-family: var(--font-serif);
+  font-size: 32px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 1;
+  margin: 0;
+  color: var(--fg);
+}
+
+.seed-clipboard-subtitle {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.55;
+  color: var(--fg-soft);
+}
 
 .seed-list {
   list-style: none;
-  margin: 0;
+  margin: 8px 0 0;
   padding: 0;
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 22px;
   counter-reset: seed;
 }
 
+/* Each question is just a row on the clipboard paper — no separate card. */
 .seed-item {
-  background: var(--card);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-lg);
-  padding: 18px 20px;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
+  background: transparent;
+  border: none;
+  padding: 0;
+  display: grid;
+  grid-template-columns: 36px 1fr;
+  align-items: start;
+  gap: 8px 12px;
   counter-increment: seed;
   position: relative;
 }
 
+/* Numbered stamp at the start of each question. */
 .seed-item::before {
-  content: counter(seed);
-  font-family: var(--font-serif);
-  color: var(--muted);
-  font-size: 13px;
-  font-weight: 500;
-  letter-spacing: 0.04em;
+  content: "Q" counter(seed, decimal-leading-zero);
+  font-family: var(--font-mono);
+  color: var(--accent);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding-top: 2px;
+  grid-column: 1;
+  grid-row: 1;
 }
 
-.seed-item textarea {
-  background: var(--bg);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: 10px 12px;
-  font: inherit;
+/* Question text — the prompt, in the right column. */
+.seed-q {
+  grid-column: 2;
+  grid-row: 1;
+  font-family: var(--font-serif);
+  margin: 0;
+  font-size: 18px;
+  font-weight: 700;
+  line-height: 1.3;
+  letter-spacing: -0.005em;
   color: var(--fg);
-  font-size: 15px;
-  font-weight: 450;
-  line-height: 1.5;
+}
+
+/* Textarea sits beneath the question, spanning both columns. */
+.seed-item textarea {
+  grid-column: 1 / -1;
+  grid-row: 2;
+  background: transparent;
+  border: none;
+  border-bottom: 2.5px dashed rgba(26, 31, 61, 0.45);
+  border-radius: 0;
+  padding: 4px 4px 6px;
+  font-family: var(--font-serif);
+  color: var(--fg);
+  font-size: 17px;
+  font-weight: 600;
+  line-height: 28px;
   resize: vertical;
   outline: none;
-  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  box-shadow: none;
+  transition: border-color 0.15s ease, border-style 0.15s ease;
+}
+
+.seed-item textarea::placeholder {
+  color: rgba(26, 31, 61, 0.3);
+  font-weight: 500;
 }
 
 .seed-item textarea:focus {
-  border-color: var(--accent);
-  box-shadow: 0 0 0 3px rgba(201, 100, 66, 0.15);
+  border-bottom-color: var(--accent);
+  border-bottom-style: solid;
 }
 
-.seed-q {
-  font-family: var(--font-serif);
-  margin: 0;
-  font-size: 19px;
+/* Lock-in button on its own row, right-aligned. */
+.seed-item .btn--primary {
+  grid-column: 1 / -1;
+  grid-row: 3;
+  justify-self: end;
+  font-family: var(--font-mono);
+  font-size: 12px;
   font-weight: 700;
-  line-height: 1.3;
-  letter-spacing: -0.01em;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 8px 18px;
+  border: 2px solid var(--fg);
+  border-radius: 6px;
+  background: var(--accent);
+  color: #fff;
+  box-shadow: 0 3px 0 var(--fg);
+  transition: transform 0.08s ease, box-shadow 0.08s ease;
 }
 
+.seed-item .btn--primary:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 0 var(--fg);
+}
+.seed-item .btn--primary:active:not(:disabled) {
+  transform: translateY(2px);
+  box-shadow: 0 1px 0 var(--fg);
+}
+.seed-item .btn--primary:disabled {
+  opacity: 0.4;
+  filter: grayscale(0.4);
+}
+
+/* Locked-in answer (read-only) — the user's submitted reply, in serif handwriting. */
 .seed-a {
+  grid-column: 1 / -1;
+  grid-row: 2;
   margin: 0;
-  padding: 10px 14px;
-  background: var(--accent-tint);
-  border-left: 2px solid var(--accent);
-  border-radius: var(--radius-sm);
-  font-size: 15px;
-  font-weight: 450;
-  color: var(--fg-soft);
-  line-height: 1.5;
+  padding: 4px 4px 6px;
+  border-bottom: 2.5px solid rgba(30, 196, 134, 0.55);
+  font-family: var(--font-serif);
+  font-size: 17px;
+  font-weight: 600;
+  color: var(--fg);
+  line-height: 28px;
 }
 
-.seed-item--locked { opacity: 0.7; }
+.seed-item--locked { opacity: 0.85; }
+.seed-item--locked::before { color: var(--ok); }
 
 /* ─────────── Results reveal ─────────── */
 
@@ -1689,19 +2259,24 @@ input, button, textarea, select {
   accent-color: var(--accent);
 }
 
-/* Round progress bar */
+/* Round progress — LED segment bar in the host control area. */
 .round-progress {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 8px;
+  padding: 12px 16px;
+  background: rgba(0, 0, 0, 0.18);
+  border: 1.5px solid rgba(0, 0, 0, 0.3);
+  border-radius: 10px;
 }
 
 .round-progress-label {
-  font-size: 13px;
-  letter-spacing: 1.5px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.16em;
   text-transform: uppercase;
-  color: var(--muted);
-  font-weight: 600;
+  color: var(--on-bg);
+  font-weight: 700;
 }
 
 .round-progress-track {
@@ -1711,19 +2286,22 @@ input, button, textarea, select {
 
 .round-progress-seg {
   flex: 1;
-  height: 6px;
-  border-radius: 999px;
-  background: var(--border);
-  transition: background 0.3s;
+  height: 10px;
+  border-radius: 3px;
+  background: rgba(255, 255, 255, 0.18);
+  border: 1px solid rgba(0, 0, 0, 0.3);
+  transition: background 0.3s, box-shadow 0.3s;
 }
 
 .round-progress-seg--done {
   background: var(--accent);
-  opacity: 0.5;
+  box-shadow: 0 0 6px rgba(255, 59, 92, 0.5);
 }
 
 .round-progress-seg--active {
-  background: var(--accent);
+  background: var(--accent-3);
+  box-shadow: 0 0 10px rgba(30, 196, 134, 0.8), inset 0 1px 0 rgba(255, 255, 255, 0.5);
+  animation: pulse-dot 1.4s ease-in-out infinite;
 }
 
 .player-row-actions {
@@ -1870,12 +2448,18 @@ input, button, textarea, select {
 @media (max-width: 720px) {
   .answers-grid { grid-template-columns: 1fr; }
   .host-question { font-size: 28px; }
-  .host-room-code { font-size: 64px; }
+  .host-control-strip { padding: 36px 16px 24px; }
+  .host-header { flex-direction: column; gap: 14px; }
+  .host-header-right { align-items: stretch; }
+  .host-phase-display { min-width: 0; }
+  .host-id-display { padding: 12px 16px; }
+  .btn--big { font-size: 15px; padding: 16px 24px; min-width: 0; width: 100%; letter-spacing: 0.08em; }
 }
 
 @media (max-width: 480px) {
   .screen { padding: 36px 18px 32px; gap: 22px; }
-  .phase { padding: 22px; }
+  .screen--player { padding: 16px 14px 28px; gap: 14px; }
+  .phase { padding: 36px 18px 18px; }
   .phase-title { font-size: 24px; }
   .phase-question { font-size: 21px; }
   .btn--vote { font-size: 44px; padding: 32px 0; }
