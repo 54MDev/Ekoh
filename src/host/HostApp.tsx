@@ -4,6 +4,7 @@ import { useParty } from "../hooks/useParty";
 import StreamingText from "./StreamingText";
 import { useTypewriter } from "./useTypewriter";
 import MusicPlayer from "./MusicPlayer";
+import RoundProgress, { MAX_ROUNDS } from "../RoundProgress";
 import type { Phase, Player, RoomState, ServerMessage } from "../types";
 
 const PHASE_LABELS: Record<Phase, string> = {
@@ -16,7 +17,6 @@ const PHASE_LABELS: Record<Phase, string> = {
 };
 
 const TYPEWRITER_CPS = 28;
-const MAX_ROUNDS = 5;
 
 function advanceLabel(phase: Phase, roundNumber: number): string {
   switch (phase) {
@@ -52,7 +52,6 @@ export default function HostApp() {
     send({ type: "join", name, asHost: true });
   }, [connected, send]);
 
-  const joinUrl = `${window.location.origin}/play/${code}`;
   const players = useMemo(
     () => (state ? Object.values(state.players).filter((p) => p.name) : []),
     [state],
@@ -87,7 +86,7 @@ export default function HostApp() {
       <header className="host-header">
         <div>
           <h1 className="host-room-code">{code}</h1>
-          <p className="host-join-url">Join at {joinUrl}</p>
+          <p className="host-join-url">Join at echo-azd.pages.dev</p>
         </div>
         <div className="host-header-right">
           <div className="phase-eyebrow">Phase</div>
@@ -97,6 +96,8 @@ export default function HostApp() {
           </div>
         </div>
       </header>
+
+      <RoundProgress phase={phase} roundNumber={state?.roundNumber ?? 0} maxRounds={MAX_ROUNDS} />
 
       <MusicPlayer />
 
@@ -110,6 +111,7 @@ export default function HostApp() {
               target={target}
               roundNumber={state.roundNumber}
               onAssign={(id) => send({ type: "assignTarget", playerId: id })}
+              onKick={(id) => send({ type: "kickPlayer", playerId: id })}
             />
           )}
           {phase === "seed" && <HostSeed state={state} />}
@@ -178,11 +180,13 @@ function HostLobby({
   target,
   roundNumber,
   onAssign,
+  onKick,
 }: {
   players: Player[];
   target: Player | null;
   roundNumber: number;
   onAssign: (id: string) => void;
+  onKick: (id: string) => void;
 }) {
   const sortedByScore = [...players].sort((a, b) => b.score - a.score);
   const showLeaderboard = roundNumber > 0;
@@ -216,13 +220,21 @@ function HostLobby({
                     <span className="leaderboard-score"> {p.score}</span>
                   )}
                 </span>
-                <button
-                  className={`btn ${isTarget ? "btn--primary" : "btn--ghost"}`}
-                  onClick={() => onAssign(p.id)}
-                  disabled={!p.isConnected}
-                >
-                  {isTarget ? "Target ✓" : "Make target"}
-                </button>
+                <div className="player-row-actions">
+                  <button
+                    className={`btn ${isTarget ? "btn--primary" : "btn--ghost"}`}
+                    onClick={() => onAssign(p.id)}
+                    disabled={!p.isConnected}
+                  >
+                    {isTarget ? "Target ✓" : "Make target"}
+                  </button>
+                  <button
+                    className="btn btn--ghost btn--kick"
+                    onClick={() => onKick(p.id)}
+                  >
+                    Kick
+                  </button>
+                </div>
               </li>
             );
           })}

@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useParty } from "../hooks/useParty";
+import RoundProgress from "../RoundProgress";
 import type { RoomState, ServerMessage } from "../types";
 import LobbyScreen from "./LobbyScreen";
 import SeedScreen from "./SeedScreen";
@@ -44,6 +45,10 @@ export default function PlayerApp() {
           {connected ? me?.name || "Connected" : "Connecting…"}
         </div>
       </header>
+
+      {state && (
+        <RoundProgress phase={state.phase} roundNumber={state.roundNumber} />
+      )}
 
       {!state ? (
         <p className="muted syncing">Syncing room state<span className="dot-1">.</span><span className="dot-2">.</span><span className="dot-3">.</span></p>

@@ -818,3 +818,56 @@ textarea {
   width: 80px;
   accent-color: var(--accent);
 }
+
+/* Round progress bar */
+.round-progress {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.round-progress-label {
+  font-size: 13px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--muted);
+  font-weight: 600;
+}
+
+.round-progress-track {
+  display: flex;
+  gap: 6px;
+}
+
+.round-progress-seg {
+  flex: 1;
+  height: 6px;
+  border-radius: 999px;
+  background: var(--border);
+  transition: background 0.3s;
+}
+
+.round-progress-seg--done {
+  background: var(--accent);
+  opacity: 0.5;
+}
+
+.round-progress-seg--active {
+  background: var(--accent);
+}
+
+.player-row-actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.btn--kick {
+  color: var(--warn);
+  border-color: var(--warn);
+  opacity: 0.7;
+}
+
+.btn--kick:hover {
+  opacity: 1;
+}
