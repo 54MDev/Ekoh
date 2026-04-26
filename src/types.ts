@@ -27,6 +27,14 @@ export interface RoundState {
   scoreDeltas: Record<string, number>;
 }
 
+export interface ChatMessage {
+  id: string;
+  fromId: string;
+  fromName: string;
+  text: string;
+  ts: number;
+}
+
 export interface RoomState {
   phase: Phase;
   players: Record<string, Player>;
@@ -34,11 +42,13 @@ export interface RoomState {
   roundNumber: number;
   questions: string[];
   usedSeedQuestions: string[];
+  chat: ChatMessage[];
 }
 
 export type ClientMessage =
   | { type: "join"; name: string; asHost?: boolean }
   | { type: "ping"; text: string }
+  | { type: "chat"; text: string }
   | { type: "assignTarget"; playerId: string }
   | { type: "submitSeedAnswer"; answer: string; index: number }
   | { type: "submitAnswer"; answer: string }

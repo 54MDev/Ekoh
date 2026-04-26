@@ -5,6 +5,7 @@ import StreamingText from "./StreamingText";
 import { useTypewriter } from "./useTypewriter";
 import MusicPlayer from "./MusicPlayer";
 import RoundProgress, { MAX_ROUNDS } from "../RoundProgress";
+import Chat from "../Chat";
 import type { Phase, Player, RoomState, ServerMessage } from "../types";
 
 const PHASE_LABELS: Record<Phase, string> = {
@@ -38,13 +39,18 @@ function advanceLabel(phase: Phase, roundNumber: number): string {
 export default function HostApp() {
   const { code = "" } = useParams();
   const [state, setState] = useState<RoomState | null>(null);
+  const [myId, setMyId] = useState<string | null>(null);
 
-  const { send, connected } = useParty({
+  const { send, connected, socket } = useParty({
     room: code,
     onMessage: (msg: ServerMessage) => {
       if (msg.type === "stateUpdate") setState(msg.state);
     },
   });
+
+  useEffect(() => {
+    if (socket) setMyId(socket.id ?? null);
+  }, [socket]);
 
   useEffect(() => {
     if (!connected) return;
@@ -80,6 +86,7 @@ export default function HostApp() {
 
   return (
     <div className="screen screen--host">
+      <div className="host-main">
       {!connected && (
         <div className="disconnect-banner">Reconnecting…</div>
       )}
@@ -164,6 +171,13 @@ export default function HostApp() {
           </div>
         </>
       )}
+      </div>
+      <Chat
+        messages={state?.chat ?? []}
+        myId={myId}
+        send={send}
+        variant="rail"
+      />
     </div>
   );
 }

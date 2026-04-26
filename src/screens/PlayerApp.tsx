@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useParty } from "../hooks/useParty";
 import RoundProgress from "../RoundProgress";
+import Chat from "../Chat";
 import type { RoomState, ServerMessage } from "../types";
 import LobbyScreen from "./LobbyScreen";
 import SeedScreen from "./SeedScreen";
@@ -36,41 +37,50 @@ export default function PlayerApp() {
 
   return (
     <div className="screen screen--player">
-      {!connected && (
-        <div className="disconnect-banner">Reconnecting…</div>
-      )}
-      <header className="player-strip">
-        <div className="player-id-display">
-          <span className="player-id-label">CHAMBER</span>
-          <span className="room-code-small">{code}</span>
-        </div>
-        <div className="player-status">
-          <span className={`player-status-led player-status-led--${connected ? "ok" : "warn"}`} />
-          <span className="player-status-name">
-            {connected ? me?.name || "CONNECTED" : "CONNECTING…"}
-          </span>
-        </div>
-      </header>
+      <div className="player-main">
+        {!connected && (
+          <div className="disconnect-banner">Reconnecting…</div>
+        )}
+        <header className="player-strip">
+          <div className="player-id-display">
+            <span className="player-id-label">CHAMBER</span>
+            <span className="room-code-small">{code}</span>
+          </div>
+          <div className="player-status">
+            <span className={`player-status-led player-status-led--${connected ? "ok" : "warn"}`} />
+            <span className="player-status-name">
+              {connected ? me?.name || "CONNECTED" : "CONNECTING…"}
+            </span>
+          </div>
+        </header>
 
-      {state && (
-        <RoundProgress phase={state.phase} roundNumber={state.roundNumber} />
-      )}
+        {state && (
+          <RoundProgress phase={state.phase} roundNumber={state.roundNumber} />
+        )}
 
-      {!state ? (
-        <p className="muted syncing">Syncing room state<span className="dot-1">.</span><span className="dot-2">.</span><span className="dot-3">.</span></p>
-      ) : state.phase === "lobby" ? (
-        <LobbyScreen state={state} me={me} code={code} />
-      ) : state.phase === "seed" ? (
-        <SeedScreen state={state} me={me} send={send} />
-      ) : state.phase === "question" ? (
-        <QuestionScreen state={state} me={me} send={send} />
-      ) : state.phase === "vote" ? (
-        <VoteScreen state={state} me={me} send={send} />
-      ) : state.phase === "results" ? (
-        <ResultsScreen state={state} me={me} />
-      ) : (
-        <EndScreen state={state} me={me} />
-      )}
+        {!state ? (
+          <p className="muted syncing">Syncing room state<span className="dot-1">.</span><span className="dot-2">.</span><span className="dot-3">.</span></p>
+        ) : state.phase === "lobby" ? (
+          <LobbyScreen state={state} me={me} code={code} />
+        ) : state.phase === "seed" ? (
+          <SeedScreen state={state} me={me} send={send} />
+        ) : state.phase === "question" ? (
+          <QuestionScreen state={state} me={me} send={send} />
+        ) : state.phase === "vote" ? (
+          <VoteScreen state={state} me={me} send={send} />
+        ) : state.phase === "results" ? (
+          <ResultsScreen state={state} me={me} />
+        ) : (
+          <EndScreen state={state} me={me} />
+        )}
+      </div>
+
+      <Chat
+        messages={state?.chat ?? []}
+        myId={myId}
+        send={send}
+        variant="rail"
+      />
     </div>
   );
 }

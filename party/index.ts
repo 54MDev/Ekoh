@@ -137,6 +137,7 @@ export default class EchoServer implements Party.Server {
     roundNumber: 0,
     questions: shuffled(QUESTION_BANK),
     usedSeedQuestions: [],
+    chat: [],
   };
 
   // Q&A pairs from prior rounds, keyed by player id. Lets the clone get
@@ -200,6 +201,24 @@ export default class EchoServer implements Party.Server {
       case "ping": {
         const from = this.state.players[sender.id]?.name || "anon";
         this.broadcast({ type: "broadcast", from, text: msg.text.slice(0, 280) });
+        return;
+      }
+      case "chat": {
+        const player = this.state.players[sender.id];
+        if (!player || !player.name) return;
+        const text = msg.text.trim().slice(0, 280);
+        if (!text) return;
+        this.state.chat.push({
+          id: `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`,
+          fromId: sender.id,
+          fromName: player.name,
+          text,
+          ts: Date.now(),
+        });
+        if (this.state.chat.length > 80) {
+          this.state.chat.splice(0, this.state.chat.length - 80);
+        }
+        this.broadcastState();
         return;
       }
       case "assignTarget": {
