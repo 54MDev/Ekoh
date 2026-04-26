@@ -6,6 +6,35 @@ interface Props {
   code: string;
 }
 
+function RoleBox({ role }: { role: "host" | "target" | "spectator" }) {
+  const info = {
+    host: {
+      label: "Host",
+      description:
+        "You run the show. Pick a target to start the round, then advance phases as the game progresses. Everyone else follows your lead.",
+    },
+    target: {
+      label: "Target",
+      description:
+        "You're in the hot seat! Answer the seed questions honestly — your answers become the key. During the round, type each answer out one character at a time so the clones can try to keep up.",
+    },
+    spectator: {
+      label: "Spectator",
+      description:
+        "Sit tight! Once the target finishes answering, you'll see two mystery answers and try to guess which one came from the real target. Vote fast — every correct pick earns you points.",
+    },
+  };
+
+  const { label, description } = info[role];
+
+  return (
+    <div className="role-box" data-role={role}>
+      <div className="role-box-label">{label}</div>
+      <p className="role-box-description">{description}</p>
+    </div>
+  );
+}
+
 export default function LobbyScreen({ state, me, code }: Props) {
   const players = Object.values(state.players).filter((p) => p.name);
   const target = players.find((p) => p.role === "target");
@@ -63,6 +92,8 @@ export default function LobbyScreen({ state, me, code }: Props) {
           ))}
         </ul>
       )}
+
+      {me && <RoleBox role={me.role} />}
     </div>
   );
 }

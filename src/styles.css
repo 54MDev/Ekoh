@@ -187,6 +187,49 @@ textarea {
   color: var(--muted);
 }
 
+.role-box {
+  margin-top: 8px;
+  padding: 16px 18px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.role-box[data-role="target"] {
+  border-color: var(--warn);
+}
+
+.role-box[data-role="spectator"] {
+  border-color: var(--accent);
+}
+
+.role-box-label {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1.2px;
+  color: var(--muted);
+}
+
+.role-box[data-role="target"] .role-box-label {
+  color: var(--warn);
+}
+
+.role-box[data-role="spectator"] .role-box-label {
+  color: var(--accent);
+}
+
+.role-box-description {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--fg);
+  opacity: 0.85;
+}
+
 .pill {
   padding: 6px 12px;
   border-radius: 999px;
